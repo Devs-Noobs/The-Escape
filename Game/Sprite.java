@@ -1,5 +1,6 @@
 import java.awt.Image;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 
 /**
  * Write a description of class Sprite here.

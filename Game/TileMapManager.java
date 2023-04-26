@@ -17,6 +17,7 @@ public class TileMapManager {
     private int currentMap = 0;
 
     private GamePanel panel;
+  
 
     // host sprites used for cloning
     private Sprite tankSprite;
@@ -95,10 +96,10 @@ public class TileMapManager {
                 else if (ch == '*') {
                     addSprite(newMap, goalSprite, x, y);
                 }
-                else if (ch == '1') {
-                    addSprite(newMap, grubSprite, x, y);
-                }
 */
+                else if (ch == '1') {
+                    addSprite(newMap, trackerSprite, x, y);
+                }
                 else if (ch == '2') {
                     addSprite(newMap, tankSprite, x, y);
                 }
@@ -146,33 +147,30 @@ public class TileMapManager {
         // keep looking for tile A,B,C, etc. this makes it
         // easy to drop new tiles in the images/ folder
 
-        File file;
+    File file;
 
-        System.out.println("loadTileImages called.");
+    System.out.println("loadTileImages called.");
 
         tiles = new ArrayList<Image>();
         char ch = 'A';
-        
         while (true) {
-            String filename = "images/tiles/tile_" + ch + ".png";
-            file = new File(filename);
-            
+            String filename = "images/tile_" + ch + ".png";
+        file = new File(filename);
             if (!file.exists()) {
-                System.out.println("Image file could not be opened: " + filename);
+        System.out.println("Image file could not be opened: " + filename);
                 break;
             }
-            else {
-                System.out.println("Image file opened: " + filename);
-                Image tileImage = new ImageIcon(filename).getImage();
-                
-                tiles.add(tileImage);
-                ch++;
-            }
+        else
+        System.out.println("Image file opened: " + filename);
+        Image tileImage = new ImageIcon(filename).getImage();
+               tiles.add(tileImage);
+            ch++;
         }
     }
     
     public void loadCreatureSprites(){
-        tankSprite = new Tank(panel, 100, 100, null);
+        tankSprite = new Tank(panel,  100, 100, null);
+        trackerSprite = new Tracker(panel,  100, 100, null);
     }
 /*
     public void loadCreatureSprites() {

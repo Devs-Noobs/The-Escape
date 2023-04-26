@@ -6,7 +6,7 @@ public class GameWindow extends JFrame
                 implements ActionListener,
                        KeyListener,
                        MouseListener
-    {
+{
     // declare instance variables for user interface objects
 
     // declare labels 
@@ -221,18 +221,14 @@ public class GameWindow extends JFrame
             //gamePanel.gameRender();
             //checkLostLife();
         }
+        else
+        if (keyCode == KeyEvent.VK_Q) {
+            gamePanel.endLevel();
+        }
     }
 
     public void keyReleased(KeyEvent e) {
-        int keyCode = e.getKeyCode();
 
-        if (keyCode == KeyEvent.VK_LEFT) {
-            gamePanel.isMoving(false);
-        }
-        else
-        if (keyCode == KeyEvent.VK_RIGHT) {
-            gamePanel.isMoving(false);
-        }
     }
 
     public void keyTyped(KeyEvent e) {

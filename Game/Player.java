@@ -26,7 +26,7 @@ public class Player {
 
    private Image playerImage;
    private Image idleLeftImage, idleRightImage;
-   private Image runLeftImage, runRightImage;
+   private Image runLeftImage, runrightImage;
 
    private boolean jumping;
    private int timeElapsed;
@@ -55,7 +55,7 @@ public class Player {
       idleLeftImage = ImageManager.loadImage("images/player/left/Idle.gif");
       idleRightImage = ImageManager.loadImage("images/player/right/Idle.gif");
       runLeftImage = ImageManager.loadImage("images/player/left/Run.gif");
-      runRightImage = ImageManager.loadImage("images/player/right/Run.gif");
+      runrightImage = ImageManager.loadImage("images/player/right/Run.gif");
 
       playerImage = idleRightImage;
    }
@@ -191,7 +191,7 @@ public class Player {
       }    
       else                
          if (direction == 2) {        // move right
-            playerImage = runRightImage;
+            playerImage = runrightImage;
 
             int playerWidth = playerImage.getWidth(null);
             newX = x + DX;
@@ -246,19 +246,6 @@ public class Player {
 
             fall();
          }
-      }
-   }
-
-   public void moving(boolean move) {
-      if (move == false) {
-
-         if (playerImage == runLeftImage) {
-            playerImage = idleLeftImage;
-         }
-         else
-            if (playerImage == runRightImage) {
-               playerImage = idleRightImage;
-            }
       }
    }
 
@@ -326,54 +313,54 @@ public class Player {
          newY = startY - distanceY;
          distanceX = (int) (initialVelocityX * timeElapsed);
        
-         if ( playerImage ==  idleLeftImage)
-            newX = startX - distanceX;
-         else
-            newX = startX + distanceX;
-               
-         if (newY > y && goingUp) {
-            goingUp = false;
-            goingDown = true;
-         }
+      if ( playerImage ==  idleLeftImage || playerImage ==  runLeftImage)
+         newX = startX - distanceX;
+      else
+         newX = startX + distanceX;
+            
+      if (newY > y && goingUp) {
+         goingUp = false;
+         goingDown = true;
+      }
 
-         if (goingUp) {
-            Point tilePos = collidesWithTileUp (x, newY);    
+      if (goingUp) {
+         Point tilePos = collidesWithTileUp (x, newY);    
+         if (tilePos != null) {                // hits a tile going up
+            System.out.println ("Jumping: Collision Going Up!");
+
+            int offsetY = tileMap.getOffsetY();
+            int topTileY = ((int) tilePos.getY()) * TILE_SIZE + offsetY;
+            int bottomTileY = topTileY + TILE_SIZE;
+
+            y = bottomTileY;
+            fall();
+         }
+         else {
+            y = newY;
+            x = newX;
+            System.out.println ("Jumping: No collision.");
+         }
+      }
+      else
+         if (goingDown) {            
+            Point tilePos = collidesWithTileDown (x, newY);    
             if (tilePos != null) {                // hits a tile going up
-               System.out.println ("Jumping: Collision Going Up!");
+               System.out.println ("Jumping: Collision Going Down!");
+               int playerHeight = playerImage.getHeight(null);
+               goingDown = false;
 
                int offsetY = tileMap.getOffsetY();
                int topTileY = ((int) tilePos.getY()) * TILE_SIZE + offsetY;
-               int bottomTileY = topTileY + TILE_SIZE;
 
-               y = bottomTileY;
-               fall();
+               y = topTileY - playerHeight;
+               jumping = false;
+               inAir = false;
             }
             else {
                y = newY;
-               x = newX;
                System.out.println ("Jumping: No collision.");
             }
          }
-         else
-            if (goingDown) {            
-               Point tilePos = collidesWithTileDown (x, newY);    
-               if (tilePos != null) {                // hits a tile going up
-                  System.out.println ("Jumping: Collision Going Down!");
-                  int playerHeight = playerImage.getHeight(null);
-                  goingDown = false;
-
-                  int offsetY = tileMap.getOffsetY();
-                  int topTileY = ((int) tilePos.getY()) * TILE_SIZE + offsetY;
-
-                  y = topTileY - playerHeight;
-                  jumping = false;
-                  inAir = false;
-               }
-               else {
-                  y = newY;
-                  System.out.println ("Jumping: No collision.");
-               }
-            }
       }
    }
 
@@ -417,5 +404,10 @@ public class Player {
 
       return new Rectangle2D.Double (x, y, playerWidth, playerHeight);
    }
+   
+      public boolean faceRightDirection(){
+       return (playerImage == runrightImage);
+   }
+
 
 }

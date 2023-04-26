@@ -11,10 +11,8 @@ import java.awt.geom.Rectangle2D;
    A component that displays all the game entities
 */
 
-public class GamePanel 
-        extends JPanel
-        implements Runnable 
-    {
+public class GamePanel extends JPanel
+               implements Runnable {
 
     private SoundManager soundManager;
 
@@ -26,6 +24,7 @@ public class GamePanel
     private BufferedImage image;
      private Image backgroundImage;
 
+    private BirdAnimation animation;
     private volatile boolean isAnimShown;
     private volatile boolean isAnimPaused;
 
@@ -56,6 +55,7 @@ public class GamePanel
 
 
     public void createGameEntities() {
+        animation = new BirdAnimation();
         imageEffect = new ImageEffect (this);
     }
 
@@ -112,10 +112,10 @@ public class GamePanel
             Graphics2D imageContext = (Graphics2D) image.getGraphics();
             imageContext.drawImage(backgroundImage, 0, 0,400,400, null);    // draw the background image
             
-            
+            soundManager.playSound("boomSound",false);
             
             updateBullet();
-            bullet.move(imageContext);
+            bullet.move();
             
             /*for(int i=0;i<NUM_tankS;i++){
                 if (bullet.collidesWithtankAndBullet(tanks[i], bullet)){
@@ -175,6 +175,9 @@ public class GamePanel
 
         tileMap.draw (imageContext);
 
+        if (isAnimShown)
+            animation.draw(imageContext);        // draw the animation
+
         imageEffect.draw(imageContext);            // draw the image effect
 
         if (gameOver) {
@@ -204,7 +207,7 @@ public class GamePanel
     public void startGame() {                // initialise and start the game thread 
 
         if (gameThread == null) {
-            //soundManager.playSound ("background", true);
+            soundManager.playSound ("background", true);
 
             gameOver = false;
 
@@ -272,6 +275,13 @@ public class GamePanel
                 isPaused = false;
             else
                 isPaused = true;
+
+            if (isAnimShown) {
+                if (isPaused)
+                    animation.stopSound();
+                else
+                    animation.playSound();
+            }
         }
     }
 
@@ -293,11 +303,6 @@ public class GamePanel
             tileMap.moveRight();
     }
 
-    public void isMoving(boolean moving) {
-        if (!gameOver && !moving)
-            tileMap.isMoving(false);
-    }
-
     public void shoot(){
         if(!gameOver)
             tileMap.shoot(true);
@@ -311,11 +316,18 @@ public class GamePanel
     
     public void showAnimation() {
         isAnimShown = true;
+        animation.start();
+        
     }
 
 
     public void endLevel() {
         level = level + 1;
+        levelChange = true;
+    }
+    
+    public void lostLife() {
+        level = 1;
         levelChange = true;
     }
 

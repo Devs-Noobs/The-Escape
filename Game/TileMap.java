@@ -1,5 +1,3 @@
-import java.awt.*;            // need this for Layout Managers
-import java.awt.event.*;  
 import java.awt.Image;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -18,17 +16,19 @@ public class TileMap {
 
     private static final int TILE_SIZE = 64;
     private static final int TILE_SIZE_BITS = 6;
-    private Bullet bullet;
+    private TankBullet tankBullet;
     private Image[][] tiles;
     private int screenWidth, screenHeight;
     private int mapWidth, mapHeight;
     private int offsetY;
     private Tank tank;
-    private LinkedList sprites;
+    private LinkedList<Sprite> sprites;
+    private LinkedList<Bullet> bullets;
     private Player player;
     private Heart heart;
+    private boolean tankShoot;
     private boolean shoot;
-
+    SoundManager  soundmanager;
     BackgroundManager bgManager;
 
     private GamePanel panel;
@@ -40,42 +40,48 @@ public class TileMap {
     */
     public TileMap(GamePanel panel, int width, int height) {
 
-        this.panel = panel;
-        dimension = panel.getSize();
+    this.panel = panel;
+    dimension = panel.getSize();
 
-        screenWidth = dimension.width;
-        screenHeight = dimension.height;
+    screenWidth = dimension.width;
+    screenHeight = dimension.height;
+    soundmanager = SoundManager.getInstance();
+    System.out.println ("Width: " + screenWidth);
+    System.out.println ("Height: " + screenHeight);
 
-        System.out.println ("Width: " + screenWidth);
-        System.out.println ("Height: " + screenHeight);
+    mapWidth = width;
+    mapHeight = height;
 
-        mapWidth = width;
-        mapHeight = height;
+        // get the y offset to draw all sprites and tiles
 
-            // get the y offset to draw all sprites and tiles
+           offsetY = screenHeight - tilesToPixels(mapHeight);
+    System.out.println("offsetY: " + offsetY);
 
-            offsetY = screenHeight - tilesToPixels(mapHeight);
-        System.out.println("offsetY: " + offsetY);
+    bgManager = new BackgroundManager (panel, 12);
 
-        bgManager = new BackgroundManager (panel, 12);
+        tiles = new Image[mapWidth][mapHeight];
+    player = new Player (panel, this, bgManager);
+    heart = new Heart (panel, player);
+        
+    sprites = new LinkedList<Sprite>();
+    bullets = new LinkedList<Bullet>();
 
-            tiles = new Image[mapWidth][mapHeight];
-        player = new Player (panel, this, bgManager);
-        heart = new Heart (panel, player);
-            
-            sprites = new LinkedList();
+    Image playerImage = player.getImage();
+    int playerHeight = playerImage.getHeight(null);
 
-        Image playerImage = player.getImage();
-        int playerHeight = playerImage.getHeight(null);
+    int x, y;
+    x = (dimension.width / 2) + TILE_SIZE;        // position player in middle of screen
 
-        int x, y;
-        x = (dimension.width / 2) + TILE_SIZE;
-        y = dimension.height - (TILE_SIZE + playerHeight);
-            player.setX(x);
-            player.setY(y);
+    //x = 1000;                    // position player in 'random' location
+    y = dimension.height - (TILE_SIZE + playerHeight);
 
-        System.out.println("Player coordinates: " + x + "," + y);
-        shoot = false;
+        player.setX(x);
+        player.setY(y);
+
+    System.out.println("Player coordinates: " + x + "," + y);
+    shoot = false;
+    tankShoot = false;
+
     }
 
 
@@ -83,7 +89,7 @@ public class TileMap {
         Gets the width of this TileMap (number of pixels across).
     */
     public int getWidthPixels() {
-        return tilesToPixels(mapWidth);
+    return tilesToPixels(mapWidth);
     }
 
 
@@ -236,9 +242,29 @@ public class TileMap {
         Iterator i = getSprites();
         while (i.hasNext()) {
             Sprite sprite = (Sprite) i.next();
-            int x = Math.round(sprite.getX()) + offsetX;
-            int y = Math.round(sprite.getY()) + offsetY;
-            g2.drawImage(sprite.getImage(), x, y, sprite.getWidth(), sprite.getHeight(), null);
+            
+            if (sprite instanceof Tank){
+                Tank tank = (Tank) sprite;
+                int x = Math.round(sprite.getX()) + offsetX;
+                int y = Math.round(sprite.getY()) - 10;
+                
+                g2.drawImage(sprite.getImage(), x, y, sprite.getWidth(), sprite.getHeight(), null);
+            }
+            
+            if (sprite instanceof Tracker){
+                Tracker tracker = (Tracker) sprite;
+                tracker.start();
+                
+                int x = Math.round(sprite.getX()) + offsetX;
+                int y = Math.round(sprite.getY());
+                //g2.drawImage(sprite.getImage(), x, y, null);
+                
+                
+                if ((tracker.getAnimation() != null) && !tracker.isStopped() && (tracker.getAnimation().isStillActive())) {
+                    //g2.drawImage(ImageManager.hFlipImage((java.awt.image.BufferedImage) tracker.getAnimation().getImage()), x, y, null);
+                    g2.drawImage(tracker.getAnimation().getImage(), x, y, null);
+                }
+            }
 /*
             // wake up the creature when it's on screen
             if (sprite instanceof Creature &&
@@ -247,22 +273,54 @@ public class TileMap {
                 ((Creature)sprite).wakeUp();
             }
 */
-            if (shoot){
-                bullet = new Bullet(this,50,350,sprites, player);
-                
-                if(bullet != null  && !bullet.isActive()){
-                    //soundManager.playClip("boom", false);
-                    int x1 = Math.round(bullet.getX()) + offsetX;
-                    int y1 = Math.round(bullet.getY()) + offsetY;
-                    g2.drawImage(bullet.getImage(), x1, y1, bullet.getWidth(), bullet.getHeight(), null);
-                    //Bullet bullet = new Bullet(this, 30, 150, ball, square);
-                }
-                shoot = false;
+        }
+        
+        if (shoot){
+            shoot = false;
+            Bullet bullet = new Bullet(this, 0, 0, null, player);
+            soundmanager.playSound("boomSound",false);
+            bullet.boom();
+            
+            //soundManager.playClip("boom", false);
+            int x1 = Math.round(player.getX()) + offsetX;
+            int y1 = Math.round(player.getY()) + 20;
+            bullet.setX(x1);
+            bullet.setY(y1);
+            bullets.add(bullet);
+        }
+        
+        Iterator i2 = bullets.listIterator(0);
+        while (i2.hasNext()) {
+            Bullet bullet = (Bullet) i2.next();
+            if(bullet != null  && bullet.isActive()){
+                g2.drawImage(bullet.getImage(), bullet.getX(), bullet.getY(), bullet.getWidth(), bullet.getHeight(), null);
+                //Bullet bullet = new Bullet(this, 30, 150, ball, square);
             }
         }
         
+        /*if (tankShoot){
+            tankBullet = new TankBullet(this,50,350,sprites, player);
+            soundmanager.playSound("boomSound",false);
+            tankShoot = false;
+            tankBullet.boom();
+            
+            //soundManager.playClip("boom", false);
+            int x1 = Math.round(tank.getX()) + offsetX;
+            int y1 = Math.round(tank.getY());
+            tankBullet.setX(x1);
+            tankBullet.setY(y1);
+        }
+        
+         if(tankBullet != null  && tankBullet.isActive()){
+            g2.drawImage(tankBullet.getImage(), tankBullet.getX(), tankBullet.getY(), tankBullet.getWidth(), tankBullet.getHeight(), null);
+            //Bullet bullet = new Bullet(this, 30, 150, ball, square);
+        }*/
         
 
+    }
+    
+     public void tankShoot (boolean tankShoot){
+        this.tankShoot = tankShoot;
     }
     
     public void shoot (boolean shoot){
@@ -270,62 +328,64 @@ public class TileMap {
     }
 
     public void moveLeft() {
-        int x, y;
-        x = player.getX();
-        y = player.getY();
+    int x, y;
+    x = player.getX();
+    y = player.getY();
 
-        String mess = "Going left. x = " + x + " y = " + y;
-        System.out.println(mess);
+    String mess = "Going left. x = " + x + " y = " + y;
+    System.out.println(mess);
 
-        player.move(1);
+    player.move(1);
 
     }
 
 
     public void moveRight() {
-        int x, y;
-        x = player.getX();
-        y = player.getY();
+    int x, y;
+    x = player.getX();
+    y = player.getY();
 
-        String mess = "Going right. x = " + x + " y = " + y;
-        System.out.println(mess);
+    String mess = "Going right. x = " + x + " y = " + y;
+    System.out.println(mess);
 
-        player.move(2);
+    player.move(2);
 
-    }
-
-
-    public void isMoving(boolean moving) {
-        if (moving == false) {
-            player.moving(false);
-        }
     }
 
 
     public void jump() {
-        int x, y;
-        x = player.getX();
-        y = player.getY();
+    int x, y;
+    x = player.getX();
+    y = player.getY();
 
-        String mess = "Jumping. x = " + x + " y = " + y;
-        System.out.println(mess);
+    String mess = "Jumping. x = " + x + " y = " + y;
+    System.out.println(mess);
 
-        player.move(3);
+    player.move(3);
 
     }
 
 
     public void update() {
-
+        
+        
+        Iterator i2 = bullets.listIterator(0);
+        while (i2.hasNext()) {
+            Bullet bullet = (Bullet) i2.next();
+            if(bullet != null  && bullet.isActive()){
+                bullet.move();
+            }
+        }
+            
         player.update();
-
+    
         if (heart.collidesWithPlayer()) {
             panel.endLevel();
             return;
         }
-
+    
         heart.update();
-
+    
         if (heart.collidesWithPlayer()) {
             panel.endLevel();
         }
@@ -335,7 +395,41 @@ public class TileMap {
         while (i.hasNext()) {
             Sprite sprite = (Sprite) i.next();
             sprite.update();
+            
+            if ((sprite instanceof Tracker) && (Tracker.collidesWithTrackerAndPlayer((Tracker) sprite, player))) {
+                panel.lostLife();
+            }
+            
+            if ((sprite instanceof Tank) && (Tank.collidesWithTankAndPlayer((Tank) sprite, player))) {
+                panel.lostLife();
+            }
+            
+            i2 = bullets.listIterator(0);
+            while (i2.hasNext()) {
+                Bullet bullet = (Bullet) i2.next();
+                
+                if (sprite instanceof Tracker){
+                    Tracker tracker = (Tracker) sprite;
+                    if (Tracker.collidesWithTrackerAndBullet(tracker, bullet) && bullet.isActive()){
+                        if (!tracker.isStopped()) {
+                            panel.lostLife();
+                            tracker.stop();
+                        }
+                    }
+                }
+                
+                if (sprite instanceof Tank){
+                    Tank tank = (Tank) sprite;
+                    if (Bullet.collidesWithTankAndBullet(tank, bullet) && bullet.isActive()){
+                        if (!tank.isStopped()) {
+                            panel.lostLife();
+                            tank.stop();
+                        }
+                    }
+                }
+            }
         }
+
     }
 
 }

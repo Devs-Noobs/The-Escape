@@ -1,4 +1,5 @@
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -27,7 +28,7 @@ public class Bullet extends Thread{
    private SoundManager soundManager;
    private Tank tank;
    private Player player; 
-   private Image bulletImage;
+   private BufferedImage bulletImage;
    
    public Bullet (TileMap t, int xPos, int yPos, LinkedList sprites, Player player){
         map = t;
@@ -35,15 +36,20 @@ public class Bullet extends Thread{
         
         this.tank = tank;
         this.player = player;
-        width = 10;
-        height = 15;
+        width = 50;
+        height = 25;
         x= player.getX() + 30;
         y= player.getY() - 100;
         bulletActive = false;
         soundManager = SoundManager.getInstance();
-        bulletImage = ImageManager.loadImage("images/bullet.png");
+        bulletImage = ImageManager.loadBufferedImage("images/bullet.png");
         dx=2;
         dy=10;
+        
+        if (!player.faceRightDirection()){
+            bulletImage = ImageManager.hFlipImage(bulletImage);
+            dx = -dx;
+        }
     }
     public boolean isActive(){
         
@@ -64,7 +70,10 @@ public class Bullet extends Thread{
     public void setLocation(){
         //x= square.getX() + 30;
         //y= square.getY() + 30;
-        x = x - dx;
+        
+        x = x + dx;
+        
+        
     }
     
     public void draw(Graphics2D g2){
@@ -93,17 +102,13 @@ public class Bullet extends Thread{
         g.dispose();
     }
     
-     public void move(Graphics2D g2) {
-        if (panel == null) return;
+    public void move() {
+        setLocation();
+        //y = y - dy;
         
-        if (!panel.isVisible()) return;
-        
-            setLocation();
-             //y = y - dy;
-        
-             this.draw(g2);
-               
-        }
+        //this.draw(g2);
+    
+    }
         
     public int getX() {
         return x;
@@ -113,7 +118,16 @@ public class Bullet extends Thread{
         return y;
     }
     
-    public void boom(Graphics2D g2) {
+    public void setX(int x) {
+        this.x = x;
+    }
+    
+    
+    public void setY(int y) {
+        this.y = y;
+    }
+    
+    public void boom() {
         /*
         if (panel == null) return;
         if (!panel.isVisible()) 
@@ -121,7 +135,14 @@ public class Bullet extends Thread{
         */
         
         bulletActive = true;
-        this.draw(g2);
+        //this.draw(g2);
+        
+        /*
+        int x1 = Math.round(player.getX()) + offsetX;
+        int y1 = Math.round(player.getY()) + offsetY;
+        g2.drawImage(this.getImage(), x1, y1, this.getWidth(), this.getHeight(), null);
+        */
+        
         /*
         for (int i = 0; i < 10000; i++){
             try
@@ -148,12 +169,12 @@ public class Bullet extends Thread{
         return myRect.intersects(tankRect); 
     }
     */
-   public static boolean collidesWithtankAndBullet(Tank tank, Bullet bullet) {
+   public static boolean collidesWithTankAndBullet(Tank tank, Bullet bullet) {
         if ((tank != null) && (bullet != null)){
             Rectangle2D.Double tankRect = tank.getBoundingRectangle();
-            Rectangle2D.Double squareRect = bullet.getBoundingRectangle();
+            Rectangle2D.Double bulletRect = bullet.getBoundingRectangle();
             
-            return tankRect.intersects(squareRect);
+            return tankRect.intersects(bulletRect);
         }
         return false;
     }
