@@ -38,13 +38,14 @@ public class Tracker implements Sprite {
         animation = new Animation(true);    // loop continuously
         panel = p;
     
-          random = new Random();
+        random = new Random();
         soundPlayed = false;
         soundManager = SoundManager.getInstance();
+
         x = xPos;
-      y = yPos;
-      dx = 1;
-      dy = 1;
+        y = yPos;
+            dx = 1;
+            dy = 1;
       
         this.bullet = bullet;  
         this.player = player;
@@ -52,9 +53,11 @@ public class Tracker implements Sprite {
 
         // load images for wild cat animation
 
-    Image animImage1 = ImageManager.loadImage("images/monster_sprite_REAL.png");
+        Image animImage1 = ImageManager.loadImage("images/monster_sprite_REAL.png");
+
         int columns = 4;
         int rows = 3;
+        
         int imageWidth = animImage1.getWidth(null) / columns;
         int imageHeight = animImage1.getHeight(null) / rows;
 
