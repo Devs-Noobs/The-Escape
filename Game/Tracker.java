@@ -64,8 +64,8 @@ public class Tracker implements Sprite {
         int imageWidth = animImage1.getWidth(null) / columns;
         int imageHeight = animImage1.getHeight(null) / rows;
         
-        width = 15;
-        height = 15;
+        width = imageWidth;
+        height = imageHeight;
         
         {
             BufferedImage frameImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
@@ -257,9 +257,8 @@ public class Tracker implements Sprite {
         if ((tracker != null) && (player != null)){
             Rectangle2D.Double trackerRect = tracker.getBoundingRectangle();
             Rectangle2D.Double playerRect = player.getBoundingRectangle();
-            Rectangle2D.Double trackerRectModified = new Rectangle2D.Double(trackerRect.getX() + 2 * trackerRect.getWidth(), trackerRect.getY() + trackerRect.getHeight(), trackerRect.getWidth(), trackerRect.getHeight() / 2);
-            //return false;
-            return trackerRectModified.intersects(playerRect);
+            
+            return trackerRect.intersects(playerRect);
         }
         return false;
     }

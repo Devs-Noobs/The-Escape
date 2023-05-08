@@ -216,7 +216,7 @@ public class GameWindow extends JFrame
             gamePanel.jump();
         }
         else
-        if (keyCode == KeyEvent.VK_SPACE) {
+        if (keyCode == KeyEvent.VK_Z) {
             gamePanel.shoot();
             //gamePanel.gameRender();
             //checkLostLife();

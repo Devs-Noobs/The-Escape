@@ -3,9 +3,9 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import javax.swing.JPanel;
-import javax.swing.JPanel;
 import java.awt.Image;
-import javax.swing.ImageIcon;
+import java.awt.image.BufferedImage;
+import java.rmi.Naming;
 import java.awt.Point;
 
 public class Player {
@@ -24,22 +24,32 @@ public class Player {
    Graphics2D g2;
    private Dimension dimension;
 
+   private int width, height;
+   private Image stripImage;
+
    private Image playerImage;
-   private Image idleLeftImage, idleRightImage;
-   private Image runLeftImage, runrightImage;
+   private Animation idleL, idleR;
+   private Animation moveL, moveR;
+   private Animation attackL, attackR;
+   private Animation deathL, deathR;
 
    private boolean jumping;
    private int timeElapsed;
    private int startY;
    private int startX;
  
+   private boolean goingUp, goingDown;
+   
+   private boolean goingL, goingR;
+   
    private boolean moving;
-   private boolean goingUp;
-   private boolean goingDown;
+   private long moveTimer;
+
+   private boolean attacking;
+   private long attackTimer;
 
    private boolean inAir;
-   private int initialVelocityX;
-   private int initialVelocityY;
+   private int initialVelocityX, initialVelocityY;
    private int startAir;
 
    public Player (JPanel panel, TileMap t, BackgroundManager b) {
@@ -48,16 +58,162 @@ public class Player {
       tileMap = t;            // tile map on which the player's sprite is displayed
       bgManager = b;            // instance of BackgroundManager
 
-      moving = false;
       goingUp = goingDown = false;
       inAir = false;
+      attacking = false;
 
-      idleLeftImage = ImageManager.loadImage("images/player/left/Idle.gif");
-      idleRightImage = ImageManager.loadImage("images/player/right/Idle.gif");
-      runLeftImage = ImageManager.loadImage("images/player/left/Run.gif");
-      runrightImage = ImageManager.loadImage("images/player/right/Run.gif");
+      width = 64;
+      height = 64;
 
-      playerImage = idleRightImage;
+      //Left
+      goingL = false;
+
+      idleL = new Animation(true);
+      stripImage = ImageManager.loadImage("images/player/left/Idle.png");
+		for (int i = 0; i < 8; i++) {
+			BufferedImage frame = new BufferedImage (width, height, BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g = (Graphics2D) frame.getGraphics();
+     
+			g.drawImage(stripImage, 
+				0, 0, 
+				64, 64,
+				(i * width), 0,
+				((i * width) + width), height,
+				null
+			);
+
+			idleL.addFrame(frame, 100);
+		}
+      idleL.start();
+
+      moveL = new Animation(true);
+      stripImage = ImageManager.loadImage("images/player/left/Run.png");
+		for (int i = 0; i < 8; i++) {
+			BufferedImage frame = new BufferedImage (width, height, BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g = (Graphics2D) frame.getGraphics();
+     
+			g.drawImage(stripImage, 
+				0, 0, 
+				64, 64,
+				(i * width), 0,
+				((i * width) + width), height,
+				null
+			);
+
+			moveL.addFrame(frame, 100);
+		}
+      moveL.start();
+      
+      attackL = new Animation(true);
+      stripImage = ImageManager.loadImage("images/player/left/HeavyA.png");
+		for (int i = 0; i < 12; i++) {
+			BufferedImage frame = new BufferedImage (width, height, BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g = (Graphics2D) frame.getGraphics();
+     
+			g.drawImage(stripImage, 
+				0, 0, 
+				160, 64,
+				(i * 160), 0,
+				((i * 160) + 160), 64,
+				null
+			);
+
+			attackL.addFrame(frame, 100);
+		}
+      
+      deathL = new Animation(true);
+      stripImage = ImageManager.loadImage("images/player/left/Death.gif");
+		for (int i = 0; i < 6; i++) {
+			BufferedImage frame = new BufferedImage (width, height, BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g = (Graphics2D) frame.getGraphics();
+     
+			g.drawImage(stripImage, 
+				0, 0, 
+				64, 64,
+				(i * width), 0,
+				((i * width) + width), height,
+				null
+			);
+
+			deathL.addFrame(frame, 100);
+		}
+
+
+      //Right
+      goingR = false;
+
+      idleR = new Animation(true);
+      stripImage = ImageManager.loadImage("images/player/right/Idle.png");
+		for (int i = 0; i < 8; i++) {
+			BufferedImage frame = new BufferedImage (width, height, BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g = (Graphics2D) frame.getGraphics();
+     
+			g.drawImage(stripImage, 
+				0, 0, 
+				64, 64,
+				(i * width), 0,
+				((i * width) + width), height,
+				null
+			);
+
+			idleR.addFrame(frame, 100);
+		}
+      idleR.start();
+
+      moveR = new Animation(true);
+      stripImage = ImageManager.loadImage("images/player/right/Run.png");
+		for (int i = 0; i < 8; i++) {
+			BufferedImage frame = new BufferedImage (width, height, BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g = (Graphics2D) frame.getGraphics();
+     
+			g.drawImage(stripImage, 
+				0, 0, 
+				64, 64,
+				(i * width), 0,
+				((i * width) + width), height,
+				null
+			);
+
+			moveR.addFrame(frame, 100);
+		}
+      moveR.start();
+      
+      attackR = new Animation(true);
+      stripImage = ImageManager.loadImage("images/player/right/HeavyA.png");
+		for (int i = 0; i < 12; i++) {
+			BufferedImage frame = new BufferedImage (width, height, BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g = (Graphics2D) frame.getGraphics();
+     
+			g.drawImage(stripImage, 
+				0, 0, 
+				160, 64,
+				(i * 160), 0,
+				((i * 160) + 160), 64,
+				null
+			);
+
+			attackR.addFrame(frame, 100);
+		}
+      
+      deathR = new Animation(true);
+      stripImage = ImageManager.loadImage("images/player/right/Death.gif");
+		for (int i = 0; i < 6; i++) {
+			BufferedImage frame = new BufferedImage (width, height, BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g = (Graphics2D) frame.getGraphics();
+     
+			g.drawImage(stripImage, 
+				0, 0, 
+				64, 64,
+				(i * width), 0,
+				((i * width) + width), height,
+				null
+			);
+
+			deathR.addFrame(frame, 100);
+		}
+
+      playerImage = idleR.getImage();
+      goingR = true;
    }
 
 
@@ -171,6 +327,7 @@ public class Player {
 
    public synchronized void move (int direction) {
       moving = true;
+      moveTimer = System.currentTimeMillis();
 
       int newX = x;
       Point tilePos = null;
@@ -178,7 +335,10 @@ public class Player {
       if (!panel.isVisible ()) return;
       
       if (direction == 1) {        // move left
-         playerImage = runLeftImage;
+         playerImage = moveL.getImage();
+         moveL.update();
+         goingL = true;
+         goingR = false;
 
          newX = x - DX;
          
@@ -191,7 +351,10 @@ public class Player {
       }    
       else                
          if (direction == 2) {        // move right
-            playerImage = runrightImage;
+            playerImage = moveR.getImage();
+            moveR.update();
+            goingL = false;
+            goingR = true;
 
             int playerWidth = playerImage.getWidth(null);
             newX = x + DX;
@@ -299,6 +462,21 @@ public class Player {
    }
 
 
+   public void attack () {
+      attacking = true;
+      attackTimer = System.currentTimeMillis();
+
+      if (goingR == true) {
+         attackR.start();
+         playerImage = attackR.getImage();
+      }
+      else if (goingL == true) {
+         attackL.start();
+         playerImage = attackL.getImage();
+      }
+   }
+
+
    public void update () {
       int distanceY = 0;
       int distanceX=0;
@@ -313,7 +491,7 @@ public class Player {
          newY = startY - distanceY;
          distanceX = (int) (initialVelocityX * timeElapsed);
        
-      if ( playerImage ==  idleLeftImage || playerImage ==  runLeftImage)
+      if (goingL == true)
          newX = startX - distanceX;
       else
          newX = startX + distanceX;
@@ -362,6 +540,62 @@ public class Player {
             }
          }
       }
+
+      //Idle Timer
+      long timer = System.currentTimeMillis() - moveTimer;
+      if (timer >= 100) {
+         if (moving == true && jumping == false) {
+            moving = false;
+         }
+      }
+
+      //Updates Animations
+		if ( attacking == false && moving == false) {
+         if (goingR == true) {
+            playerImage = idleR.getImage();
+            idleR.update();
+         }
+         else if (goingL == true) {
+            playerImage = idleL.getImage();
+            idleL.update();
+         }
+		}
+      else if (moving == true) {
+         if (goingR == true) {
+            playerImage = moveR.getImage();
+            moveR.update();
+         }
+         else if (goingL == true) {
+            playerImage = moveL.getImage();
+            moveL.update();
+         }
+      }
+      else if (attacking == true) {
+         timer = System.currentTimeMillis() - attackTimer;
+         if (timer >= 1200) {
+            attacking = false;
+         }
+         else
+            if (goingR) {
+               attackR.update();
+            }
+            else  if (goingL) {
+               attackL.update();
+            }
+      }
+   }
+
+
+   public int direction () {
+      if (goingR)
+         return 1;
+      else 
+         return 0;
+   }
+
+   
+   public boolean isAttacking () {
+      return attacking;
    }
 
 
@@ -404,10 +638,4 @@ public class Player {
 
       return new Rectangle2D.Double (x, y, playerWidth, playerHeight);
    }
-   
-      public boolean faceRightDirection(){
-       return (playerImage == runrightImage);
-   }
-
-
 }

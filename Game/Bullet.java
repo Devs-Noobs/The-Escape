@@ -36,8 +36,8 @@ public class Bullet extends Thread{
         
         this.tank = tank;
         this.player = player;
-        width = 50;
-        height = 25;
+        width = 32;
+        height = 24;
         x= player.getX() + 30;
         y= player.getY() - 100;
         bulletActive = false;
@@ -46,7 +46,7 @@ public class Bullet extends Thread{
         dx=2;
         dy=10;
         
-        if (!player.faceRightDirection()){
+        if (player.direction() == 0){
             bulletImage = ImageManager.hFlipImage(bulletImage);
             dx = -dx;
         }
@@ -67,7 +67,7 @@ public class Bullet extends Thread{
       return bulletImage;
    }
 
-    public void setLocation(){
+    public void update(){
         //x= square.getX() + 30;
         //y= square.getY() + 30;
         
@@ -100,14 +100,6 @@ public class Bullet extends Thread{
         g2.fill(new Rectangle2D.Double(x-10,y-10,width+20,height+20));
         
         g.dispose();
-    }
-    
-    public void move() {
-        setLocation();
-        //y = y - dy;
-        
-        //this.draw(g2);
-    
     }
         
     public int getX() {
@@ -174,7 +166,7 @@ public class Bullet extends Thread{
             Rectangle2D.Double tankRect = tank.getBoundingRectangle();
             Rectangle2D.Double bulletRect = bullet.getBoundingRectangle();
             
-            return tankRect.intersects(bulletRect);
+            return bulletRect.intersects(tankRect);
         }
         return false;
     }

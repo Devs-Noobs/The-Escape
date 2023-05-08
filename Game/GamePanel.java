@@ -36,7 +36,6 @@ public class GamePanel extends JPanel
     private boolean levelChange;
     private int level;
     private boolean gameOver;
-    private Bullet bullet;
 
     public GamePanel () {
 
@@ -44,7 +43,6 @@ public class GamePanel extends JPanel
         isPaused = false;
         isAnimShown = false;
         isAnimPaused = false;
-        bullet = null;
         soundManager = SoundManager.getInstance();
 
         image = new BufferedImage (600, 500, BufferedImage.TYPE_INT_RGB);
@@ -107,17 +105,17 @@ public class GamePanel extends JPanel
                 
         }
         
-         
+        /*
         if(bullet!=null && bullet.isActive()){
             Graphics2D imageContext = (Graphics2D) image.getGraphics();
             imageContext.drawImage(backgroundImage, 0, 0,400,400, null);    // draw the background image
             
-            soundManager.playSound("boomSound",false);
+            //soundManager.playSound("boomSound",false);
             
             updateBullet();
             bullet.move();
             
-            /*for(int i=0;i<NUM_tankS;i++){
+            for(int i=0;i<NUM_tankS;i++){
                 if (bullet.collidesWithtankAndBullet(tanks[i], bullet)){
                     //if (explosion == null){
                     explosion.setlocation();
@@ -131,18 +129,16 @@ public class GamePanel extends JPanel
                    // }
                 }
 
-            }*/
+            }
              // if (animation.collidesWithTrackerAndBullet( animation, bullet)){                    
                     // soundManager.playSound("appear", false);
                     // isHit= true;
                         // animation.stop();
                 // }
         }
+        */
     }
-        
-    public void updateBullet() {
-        bullet.setLocation();
-    }
+    
     // public void shoot (){
         // bullet = new Bullet(this,50,350,tank,player);
         // if(bullet != null && !isPaused && !bullet.isActive()){

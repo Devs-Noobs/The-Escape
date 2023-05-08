@@ -224,11 +224,21 @@ public class TileMap {
 
 
         // draw player
-
-        g2.drawImage(player.getImage(),
-            Math.round(player.getX()) + offsetX,
-            Math.round(player.getY()), //+ offsetY,
-            null);
+        if (player.isAttacking() == true) {
+            if (player.direction() == 0) {
+                g2.drawImage(player.getImage(),
+                    Math.round(player.getX()) + offsetX - 94,
+                    Math.round(player.getY()), //+ offsetY,
+                    null);
+            }
+        }
+        else {
+            g2.drawImage(player.getImage(),
+                Math.round(player.getX()) + offsetX,
+                Math.round(player.getY()), //+ offsetY,
+                null);
+        }
+        
 
     // draw Heart sprite
 
@@ -248,6 +258,8 @@ public class TileMap {
                 int x = Math.round(sprite.getX()) + offsetX;
                 int y = Math.round(sprite.getY()) - 10;
                 
+                drawBoundedRectangle (g2, java.awt.Color.GREEN, x, x + sprite.getWidth(), y, y + sprite.getHeight());
+                
                 g2.drawImage(sprite.getImage(), x, y, sprite.getWidth(), sprite.getHeight(), null);
             }
             
@@ -260,9 +272,12 @@ public class TileMap {
                 //g2.drawImage(sprite.getImage(), x, y, null);
                 
                 
-                if ((tracker.getAnimation() != null) && !tracker.isStopped() && (tracker.getAnimation().isStillActive())) {
+                if (!tracker.isStopped() && (tracker.getAnimation() != null) && (tracker.getAnimation().isStillActive())) {
                     //g2.drawImage(ImageManager.hFlipImage((java.awt.image.BufferedImage) tracker.getAnimation().getImage()), x, y, null);
-                    g2.drawImage(tracker.getAnimation().getImage(), x, y, null);
+                    
+                    drawBoundedRectangle (g2, java.awt.Color.BLUE, x, x + sprite.getWidth(), y, y + sprite.getHeight());
+                    
+                    g2.drawImage(tracker.getAnimation().getImage(), x, y, sprite.getWidth(), sprite.getHeight(), null);
                 }
             }
 /*
@@ -282,9 +297,9 @@ public class TileMap {
             bullet.boom();
             
             //soundManager.playClip("boom", false);
-            int x1 = Math.round(player.getX()) + offsetX;
             int y1 = Math.round(player.getY()) + 20;
-            bullet.setX(x1);
+            
+            
             bullet.setY(y1);
             bullets.add(bullet);
         }
@@ -293,8 +308,12 @@ public class TileMap {
         while (i2.hasNext()) {
             Bullet bullet = (Bullet) i2.next();
             if(bullet != null  && bullet.isActive()){
-                g2.drawImage(bullet.getImage(), bullet.getX(), bullet.getY(), bullet.getWidth(), bullet.getHeight(), null);
-                //Bullet bullet = new Bullet(this, 30, 150, ball, square);
+                int x1 = Math.round(bullet.getX()) + offsetX;
+                int y1 = bullet.getY();
+                
+                drawBoundedRectangle (g2, java.awt.Color.RED, x1, x1 + bullet.getWidth(), y1, y1 + bullet.getHeight());
+                
+                g2.drawImage(bullet.getImage(), x1, y1, bullet.getWidth(), bullet.getHeight(), null);
             }
         }
         
@@ -319,50 +338,65 @@ public class TileMap {
 
     }
     
-     public void tankShoot (boolean tankShoot){
+    public void drawBoundedRectangle (Graphics2D g2, java.awt.Color colour, int x1, int x2, int y1, int y2){
+        g2.setColor(colour);
+        g2.drawLine(x1, y1, x2, y1);
+        g2.drawLine(x1, y1, x1, y2);
+        g2.drawLine(x1, y2, x2, y2);
+        g2.drawLine(x2, y1, x2, y2);
+    }
+    
+    
+    public void tankShoot (boolean tankShoot){
         this.tankShoot = tankShoot;
     }
     
     public void shoot (boolean shoot){
         this.shoot = shoot;
+        player.attack();
     }
 
     public void moveLeft() {
-    int x, y;
-    x = player.getX();
-    y = player.getY();
-
-    String mess = "Going left. x = " + x + " y = " + y;
-    System.out.println(mess);
-
-    player.move(1);
+        int x, y;
+        x = player.getX();
+        y = player.getY();
+    
+        String mess = "Going left. x = " + x + " y = " + y;
+        System.out.println(mess);
+    
+        player.move(1);
 
     }
 
 
     public void moveRight() {
-    int x, y;
-    x = player.getX();
-    y = player.getY();
-
-    String mess = "Going right. x = " + x + " y = " + y;
-    System.out.println(mess);
-
-    player.move(2);
+        int x, y;
+        x = player.getX();
+        y = player.getY();
+    
+        String mess = "Going right. x = " + x + " y = " + y;
+        System.out.println(mess);
+    
+        player.move(2);
 
     }
 
 
     public void jump() {
-    int x, y;
-    x = player.getX();
-    y = player.getY();
+        int x, y;
+        x = player.getX();
+        y = player.getY();
+    
+        String mess = "Jumping. x = " + x + " y = " + y;
+        System.out.println(mess);
+    
+        player.move(3);
 
-    String mess = "Jumping. x = " + x + " y = " + y;
-    System.out.println(mess);
+    }
 
-    player.move(3);
 
+    public void attack() {
+        player.attack();
     }
 
 
@@ -373,7 +407,7 @@ public class TileMap {
         while (i2.hasNext()) {
             Bullet bullet = (Bullet) i2.next();
             if(bullet != null  && bullet.isActive()){
-                bullet.move();
+                bullet.update();
             }
         }
             
@@ -396,33 +430,38 @@ public class TileMap {
             Sprite sprite = (Sprite) i.next();
             sprite.update();
             
-            if ((sprite instanceof Tracker) && (Tracker.collidesWithTrackerAndPlayer((Tracker) sprite, player))) {
-                panel.lostLife();
-            }
-            
-            if ((sprite instanceof Tank) && (Tank.collidesWithTankAndPlayer((Tank) sprite, player))) {
-                panel.lostLife();
-            }
-            
-            i2 = bullets.listIterator(0);
-            while (i2.hasNext()) {
-                Bullet bullet = (Bullet) i2.next();
+            if (sprite instanceof Tracker){
+                Tracker tracker = (Tracker) sprite;
+                if (Tracker.collidesWithTrackerAndPlayer(tracker, player) && !tracker.isStopped()) {
+                    panel.lostLife();
+                }
                 
-                if (sprite instanceof Tracker){
-                    Tracker tracker = (Tracker) sprite;
+                i2 = bullets.listIterator(0);
+                while (i2.hasNext()) {
+                    Bullet bullet = (Bullet) i2.next();                        
+                    
                     if (Tracker.collidesWithTrackerAndBullet(tracker, bullet) && bullet.isActive()){
                         if (!tracker.isStopped()) {
-                            panel.lostLife();
                             tracker.stop();
                         }
                     }
                 }
+            }
+            
+            if (sprite instanceof Tank){
+                Tank tank = (Tank) sprite;
+                if (Tank.collidesWithTankAndPlayer(tank, player) && !tank.isStopped()) {
+                    panel.lostLife();
+                }
                 
-                if (sprite instanceof Tank){
-                    Tank tank = (Tank) sprite;
+                i2 = bullets.listIterator(0);
+                while (i2.hasNext()) {
+                    Bullet bullet = (Bullet) i2.next();
+                    
                     if (Bullet.collidesWithTankAndBullet(tank, bullet) && bullet.isActive()){
+                        System.out.println("BULLET & TANK COLLIDE");
                         if (!tank.isStopped()) {
-                            panel.lostLife();
+                            //panel.lostLife();
                             tank.stop();
                         }
                     }

@@ -1,104 +1,98 @@
+//Images
 import java.awt.Image;
+
+//Arraylist
 import java.util.ArrayList;
 
 
-/**
-    The Animation class manages a series of images (frames) and
-    the amount of time to display each frame.
-*/
 public class Animation {
+    //Timer
+    private long animTime;
+    private long startTime;
+    private long totalDuration;
 
-//    private GamePanel panel;					// JPanel on which animation is being displayed
-    private ArrayList<AnimFrame> frames;			// collection of frames for animation
-    private int currFrameIndex;					// current frame being displayed
-    private long animTime;					// time that the animation has run for already
-    private long startTime;					// start time of the animation or time since last update
-    private long totalDuration;					// total duration of the animation
-
+    //Animation
+    private ArrayList<AnimFrame> frames;
+    private int currFrameIndex;
     private boolean loop;
     private boolean isActive;
 
-    /**
-        Creates a new, empty Animation.
-    */
-    public Animation(boolean loop) {
+
+    public Animation (boolean loop) {
         frames = new ArrayList<AnimFrame>();
         totalDuration = 0;
-	this.loop = loop;
-	isActive = false;
+	    this.loop = loop;
+	    isActive = false;
     }
 
-
-    /**
-        Adds an image to the animation with the specified
-        duration (time to display the image).
-    */
-    public synchronized void addFrame(Image image, long duration)
-    {
+    //Add frmaes to Animation
+    public synchronized void addFrame(Image image, long duration) {
         totalDuration += duration;
         frames.add(new AnimFrame(image, totalDuration));
     }
 
-
-    /**
-        Starts this animation over from the beginning.
-    */
+    //Starts Animation
     public synchronized void start() {
-	isActive = true;
+	    isActive = true;
         animTime = 0;						// reset time animation has run for to zero
         currFrameIndex = 0;					// reset current frame to first frame
-	startTime = System.currentTimeMillis();			// reset start time to current time
+	    startTime = System.currentTimeMillis();			// reset start time to current time
     }
 
 
-    /**
-        Terminates this animation.
-    */
-    public synchronized void stop() {
-	isActive = true;
-    }
-
-
-    /**
-        Updates this animation's current image (frame), if
-        neccesary.
-    */
+    //Updates Animation Frame
     public synchronized void update() {
+	    if (!isActive) return;
 
-	if (!isActive)
-	    return;
-
-        long currTime = System.currentTimeMillis();		// find the current time
-	long elapsedTime = currTime - startTime;		// find how much time has elapsed since last update
-	startTime = currTime;					// set start time to current time
+        //Initialises Timer for Animation
+            //Find the current time
+        long currTime = System.currentTimeMillis();
+            //Find how much time has elapsed since last update
+	    long elapsedTime = currTime - startTime;		
+        	//Set start time to current time
+	    startTime = currTime;
+        
 
         if (frames.size() > 1) {
-            animTime += elapsedTime;				// add elapsed time to amount of time animation has run for
-            if (animTime >= totalDuration) {			// if the time animation has run for > total duration
-		if (loop) {
-                    animTime = animTime % totalDuration;	// reset time animation has run for
-                    currFrameIndex = 0;				// reset current frame to first frame
-		}
-		else { 
-	            isActive = false;				// set to false to terminate animation
-		}
+            //Add elapsed time to amount of time animation has run for
+            animTime += elapsedTime;				
+            
+            //If the time animation has run for > total duration
+            if (animTime >= totalDuration) {			
+		        if (loop) {
+                    //Reset time animation has run for
+                    animTime = animTime % totalDuration;
+
+                    //Reset current frame to first frame
+                    currFrameIndex = 0;
+		        }
+		        else { 
+                    //Set to false to terminate animation
+	                isActive = false;
+		        }
             }
 
-	    if (!isActive)
-	       return;
+	        if (!isActive) {
+	            return;
+            }
 
             while (animTime > getFrame(currFrameIndex).endTime) {
-                currFrameIndex++;				// set frame corresponding to time animation has run for
+                //Set frame corresponding to time animation has run for
+                currFrameIndex++;
             }
         }
-	
+        
+        //END update()
     }
 
+    //Terminates this animation.
+    public synchronized void stop() {
+	    isActive = true;
 
-    /**
-        Gets this Animation's current image. Returns null if this
-        animation has no images.
-    */
+        //END stop()
+    }
+
+    //Gets this Animation's current image. Returns null if this animation has no images.
     public synchronized Image getImage() {
         if (frames.size() == 0) {
             return null;
@@ -106,25 +100,29 @@ public class Animation {
         else {
             return getFrame(currFrameIndex).image;
         }
+
+        //END getImage()
     }
 
+    //Returns number of frams in animation
+    public int getNumFrames() {
+	    return frames.size();
 
-    public int getNumFrames() {					// find out how many frames in animation
-	return frames.size();
+        //END getNumFrames()
     }
 
-
-    private AnimFrame getFrame(int i) {				// returns ith frame in the collection
+    //Returns requested frame in the collection
+    private AnimFrame getFrame(int i) {
         return frames.get(i);
     }
 
-
-    public boolean isStillActive () {
-	return isActive;
+    //Returns boolean values is animation is active
+    public boolean isStillActive() {
+	    return isActive;
     }
 
-
-    private class AnimFrame {					// inner class for the frames of the animation
+    //Inner class for the frames of the animation
+    private class AnimFrame {
 
         Image image;
         long endTime;
@@ -136,3 +134,12 @@ public class Animation {
     }
 
 }
+
+/*
+	STUDENT NAME:	Nikosi Lessey
+	STUDENT ID:		816027711
+	COURSE TITLE:	Game Programming
+	COURSE CODE:	COMP 3609
+
+	ASSIGNMENT #1
+*/

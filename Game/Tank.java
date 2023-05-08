@@ -26,22 +26,19 @@ public class Tank implements Sprite {
     private boolean soundPlayed;
     private int dx;  //increment to move alond x-axis
     private int dy;  //increment to move along y-axis
-    private int initialVelocityX;
     private boolean moveRight;
     private boolean originalImage;
     private boolean stopped;
     private int timeElapsed;
-    private int startX;
     private Color backgroundColour;
     private Dimension dimension;
     private SoundManager soundManager;
-    private Random random;
     private BufferedImage tankImage;
     private BufferedImage tankImageRight;
     private BufferedImage tankImageLeft;
     private Player player;
 
-   public Tank (JPanel p,int xPos, int yPos, Player player){
+    public Tank (JPanel p,int xPos, int yPos, Player player){
         //tileMap = t;
         panel = p;
         dimension = panel.getSize();
@@ -51,17 +48,12 @@ public class Tank implements Sprite {
         
         this.stopped = false;
         soundPlayed = false;
-        //width = 15;
-        //height = 20;
         width = 60; //93;
         height = 40; //59;
         
-        random = new Random();
         originalImage = true;
         x = xPos;
         y = yPos;
-        
-        //setLocation();
         
         tankImageLeft = ImageManager.loadBufferedImage("images/tank/TankMoveLeft.png");
         tankImageRight = ImageManager.hFlipImage(tankImageLeft);
@@ -70,7 +62,6 @@ public class Tank implements Sprite {
         dx = DX;
         dy = 0;
         moveRight = true;
-        initialVelocityX = 15;
         timeElapsed = 0;
     }
     
@@ -85,7 +76,6 @@ public class Tank implements Sprite {
         this.backgroundColour = tank.backgroundColour;
         this.dimension = tank.dimension;
         this.soundManager = tank.soundManager;
-        this.random = tank.random;
         this.tankImage = tank.tankImage;
         this.tankImageRight = tank.tankImageRight;
         this.tankImageLeft = tank.tankImageLeft;
@@ -97,17 +87,11 @@ public class Tank implements Sprite {
         return new Tank(this);
     }
     
-      public boolean faceRightDirection(){
-       return (tankImage == tankImageRight);
-   }
+    public boolean faceRightDirection(){
+        return (tankImage == tankImageRight);
+    }
+    
 
-    
-    /*public void setLocation(){
-       int panelWidth=panel.getWidth();
-       x = random.nextInt(panelWidth-width);
-       y=10;
-    }*/
-    
     public void draw(Graphics2D g2){
         if (originalImage){
             g2.drawImage(tankImageLeft, x, y, getWidth(), getHeight(), null);
@@ -127,25 +111,6 @@ public class Tank implements Sprite {
         g.dispose();
     }
     
-    public void move() {
-
-        if (!panel.isVisible()) return;
-
-        //x = x + dx;
-        //y = y + dy;
-
-        //int height = panel.getHeight();
-        
-
-        if (y > height) {
-            //setLocation();
-             soundManager.playSound("appear", false);
-            //dy = dy + 1;    // increase increment each time alien hits bottom of GamePanel
-        }
-    }
-
-
-    
     private boolean collidesWithplayer() {
         Rectangle2D.Double myRect = getBoundingRectangle();
         Rectangle2D.Double playerRect = player.getBoundingRectangle();
@@ -164,7 +129,7 @@ public class Tank implements Sprite {
     }
     
     
-     public static boolean collidesWithTankAndPlayer(Tank tank, Player player) {
+    public static boolean collidesWithTankAndPlayer(Tank tank, Player player) {
         if ((tank != null) && (player != null)){
             Rectangle2D.Double tankRect = tank.getBoundingRectangle();
             Rectangle2D.Double playerRect = player.getBoundingRectangle();
@@ -196,7 +161,10 @@ public class Tank implements Sprite {
     }
     
     public void update() {
-       if (player != null){
+        if (stopped)
+            return;
+        
+        if (player != null){
             x = x + dx;
             if (moveRight){
                 if (getX() < player.getX()){ // move left now
@@ -205,24 +173,23 @@ public class Tank implements Sprite {
                     tankImage =tankImageRight;
                     dx = Math.abs(dx);
                     x = x + dx;
-
-                }
-            } else {
-                if (getX() > player.getX()){ // move right now
-                    originalImage = true;
-                    tankImage = tankImageLeft;
-                    moveRight = true;
-                    dx = dx * -1;
-                    x = x + dx;
-                                      
                 }
             }
+            else
+            if (getX() > player.getX()){ // move right now
+                originalImage = true;
+                tankImage = tankImageLeft;
+                moveRight = true;
+                dx = dx * -1;
+                x = x + dx;
+            }
             
-        /*if (Math.abs (x - player.getX()) < 50 && !soundPlayed) {
+            /*if (Math.abs (x - player.getX()) < 50 && !soundPlayed) {
             //soundManager.playSound ("alien_close", false);
+            //soundManager.playSound("appear", false);
             soundPlayed = true;
             tileMap.tankShoot(true);
-        }*/
+            }*/
         }
     }
     
@@ -242,21 +209,20 @@ public class Tank implements Sprite {
         return stopped;
     }
     
-     public Point collidesWithTile(int newX, int newY) {
-
-            int tankWidth = tankImage.getWidth(null);
-            int offsetY = tileMap.getOffsetY();
-      int xTile = tileMap.pixelsToTiles(newX);
-      int yTile = tileMap.pixelsToTiles(newY - offsetY);
-
-      if (tileMap.getTile(xTile, yTile) != null) {
+    public Point collidesWithTile(int newX, int newY) {
+        int tankWidth = tankImage.getWidth(null);
+        int offsetY = tileMap.getOffsetY();
+        int xTile = tileMap.pixelsToTiles(newX);
+        int yTile = tileMap.pixelsToTiles(newY - offsetY);
+        
+        if (tileMap.getTile(xTile, yTile) != null) {
             Point tilePos = new Point (xTile, yTile);
-          return tilePos;
-      }
-      else {
-        return null;
-      }
-   }
+            return tilePos;
+        }
+        else {
+            return null;
+        }
+    }
     
     public int getWidth(){
         return width;
