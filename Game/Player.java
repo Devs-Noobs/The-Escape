@@ -70,73 +70,73 @@ public class Player {
 
       idleL = new Animation(true);
       stripImage = ImageManager.loadImage("images/player/left/Idle.png");
-		for (int i = 0; i < 8; i++) {
-			BufferedImage frame = new BufferedImage (width, height, BufferedImage.TYPE_INT_ARGB);
-			Graphics2D g = (Graphics2D) frame.getGraphics();
+        for (int i = 0; i < 8; i++) {
+            BufferedImage frame = new BufferedImage (width, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = (Graphics2D) frame.getGraphics();
      
-			g.drawImage(stripImage, 
-				0, 0, 
-				64, 64,
-				(i * width), 0,
-				((i * width) + width), height,
-				null
-			);
+            g.drawImage(stripImage, 
+                0, 0, 
+                64, 64,
+                (i * width), 0,
+                ((i * width) + width), height,
+                null
+            );
 
-			idleL.addFrame(frame, 100);
-		}
+            idleL.addFrame(frame, 100);
+        }
       idleL.start();
 
       moveL = new Animation(true);
       stripImage = ImageManager.loadImage("images/player/left/Run.png");
-		for (int i = 0; i < 8; i++) {
-			BufferedImage frame = new BufferedImage (width, height, BufferedImage.TYPE_INT_ARGB);
-			Graphics2D g = (Graphics2D) frame.getGraphics();
+        for (int i = 0; i < 8; i++) {
+            BufferedImage frame = new BufferedImage (width, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = (Graphics2D) frame.getGraphics();
      
-			g.drawImage(stripImage, 
-				0, 0, 
-				64, 64,
-				(i * width), 0,
-				((i * width) + width), height,
-				null
-			);
+            g.drawImage(stripImage, 
+                0, 0, 
+                64, 64,
+                (i * width), 0,
+                ((i * width) + width), height,
+                null
+            );
 
-			moveL.addFrame(frame, 100);
-		}
+            moveL.addFrame(frame, 100);
+        }
       moveL.start();
       
       attackL = new Animation(true);
       stripImage = ImageManager.loadImage("images/player/left/HeavyA.png");
-		for (int i = 0; i < 12; i++) {
-			BufferedImage frame = new BufferedImage (width, height, BufferedImage.TYPE_INT_ARGB);
-			Graphics2D g = (Graphics2D) frame.getGraphics();
+        for (int i = 0; i < 12; i++) {
+            BufferedImage frame = new BufferedImage (width, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = (Graphics2D) frame.getGraphics();
      
-			g.drawImage(stripImage, 
-				0, 0, 
-				160, 64,
-				(i * 160), 0,
-				((i * 160) + 160), 64,
-				null
-			);
+            g.drawImage(stripImage, 
+                0, 0, 
+                160, 64,
+                (i * 160), 0,
+                ((i * 160) + 160), 64,
+                null
+            );
 
-			attackL.addFrame(frame, 100);
-		}
+            attackL.addFrame(frame, 100);
+        }
       
       deathL = new Animation(true);
       stripImage = ImageManager.loadImage("images/player/left/Death.gif");
-		for (int i = 0; i < 6; i++) {
-			BufferedImage frame = new BufferedImage (width, height, BufferedImage.TYPE_INT_ARGB);
-			Graphics2D g = (Graphics2D) frame.getGraphics();
+        for (int i = 0; i < 6; i++) {
+            BufferedImage frame = new BufferedImage (width, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = (Graphics2D) frame.getGraphics();
      
-			g.drawImage(stripImage, 
-				0, 0, 
-				64, 64,
-				(i * width), 0,
-				((i * width) + width), height,
-				null
-			);
+            g.drawImage(stripImage, 
+                0, 0, 
+                64, 64,
+                (i * width), 0,
+                ((i * width) + width), height,
+                null
+            );
 
-			deathL.addFrame(frame, 100);
-		}
+            deathL.addFrame(frame, 100);
+        }
 
 
       //Right
@@ -144,73 +144,73 @@ public class Player {
 
       idleR = new Animation(true);
       stripImage = ImageManager.loadImage("images/player/right/Idle.png");
-		for (int i = 0; i < 8; i++) {
-			BufferedImage frame = new BufferedImage (width, height, BufferedImage.TYPE_INT_ARGB);
-			Graphics2D g = (Graphics2D) frame.getGraphics();
+        for (int i = 0; i < 8; i++) {
+            BufferedImage frame = new BufferedImage (width, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = (Graphics2D) frame.getGraphics();
      
-			g.drawImage(stripImage, 
-				0, 0, 
-				64, 64,
-				(i * width), 0,
-				((i * width) + width), height,
-				null
-			);
+            g.drawImage(stripImage, 
+                0, 0, 
+                64, 64,
+                (i * width), 0,
+                ((i * width) + width), height,
+                null
+            );
 
-			idleR.addFrame(frame, 100);
-		}
+            idleR.addFrame(frame, 100);
+        }
       idleR.start();
 
       moveR = new Animation(true);
       stripImage = ImageManager.loadImage("images/player/right/Run.png");
-		for (int i = 0; i < 8; i++) {
-			BufferedImage frame = new BufferedImage (width, height, BufferedImage.TYPE_INT_ARGB);
-			Graphics2D g = (Graphics2D) frame.getGraphics();
+        for (int i = 0; i < 8; i++) {
+            BufferedImage frame = new BufferedImage (width, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = (Graphics2D) frame.getGraphics();
      
-			g.drawImage(stripImage, 
-				0, 0, 
-				64, 64,
-				(i * width), 0,
-				((i * width) + width), height,
-				null
-			);
+            g.drawImage(stripImage, 
+                0, 0, 
+                64, 64,
+                (i * width), 0,
+                ((i * width) + width), height,
+                null
+            );
 
-			moveR.addFrame(frame, 100);
-		}
+            moveR.addFrame(frame, 100);
+        }
       moveR.start();
       
       attackR = new Animation(true);
       stripImage = ImageManager.loadImage("images/player/right/HeavyA.png");
-		for (int i = 0; i < 12; i++) {
-			BufferedImage frame = new BufferedImage (width, height, BufferedImage.TYPE_INT_ARGB);
-			Graphics2D g = (Graphics2D) frame.getGraphics();
+        for (int i = 0; i < 12; i++) {
+            BufferedImage frame = new BufferedImage (width, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = (Graphics2D) frame.getGraphics();
      
-			g.drawImage(stripImage, 
-				0, 0, 
-				160, 64,
-				(i * 160), 0,
-				((i * 160) + 160), 64,
-				null
-			);
+            g.drawImage(stripImage, 
+                0, 0, 
+                160, 64,
+                (i * 160), 0,
+                ((i * 160) + 160), 64,
+                null
+            );
 
-			attackR.addFrame(frame, 100);
-		}
+            attackR.addFrame(frame, 100);
+        }
       
       deathR = new Animation(true);
       stripImage = ImageManager.loadImage("images/player/right/Death.gif");
-		for (int i = 0; i < 6; i++) {
-			BufferedImage frame = new BufferedImage (width, height, BufferedImage.TYPE_INT_ARGB);
-			Graphics2D g = (Graphics2D) frame.getGraphics();
+        for (int i = 0; i < 6; i++) {
+            BufferedImage frame = new BufferedImage (width, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = (Graphics2D) frame.getGraphics();
      
-			g.drawImage(stripImage, 
-				0, 0, 
-				64, 64,
-				(i * width), 0,
-				((i * width) + width), height,
-				null
-			);
+            g.drawImage(stripImage, 
+                0, 0, 
+                64, 64,
+                (i * width), 0,
+                ((i * width) + width), height,
+                null
+            );
 
-			deathR.addFrame(frame, 100);
-		}
+            deathR.addFrame(frame, 100);
+        }
 
       playerImage = idleR.getImage();
       goingR = true;
@@ -336,7 +336,7 @@ public class Player {
       
       if (direction == 1) {        // move left
          playerImage = moveL.getImage();
-         moveL.update();
+        // moveL.update();
          goingL = true;
          goingR = false;
 
@@ -550,7 +550,7 @@ public class Player {
       }
 
       //Updates Animations
-		if ( attacking == false && moving == false) {
+        if ( attacking == false && moving == false) {
          if (goingR == true) {
             playerImage = idleR.getImage();
             idleR.update();
@@ -559,7 +559,7 @@ public class Player {
             playerImage = idleL.getImage();
             idleL.update();
          }
-		}
+        }
       else if (moving == true) {
          if (goingR == true) {
             playerImage = moveR.getImage();

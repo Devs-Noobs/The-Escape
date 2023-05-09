@@ -238,8 +238,6 @@ public class TileMap {
                 Math.round(player.getY()), //+ offsetY,
                 null);
         }
-        
-
     // draw Heart sprite
 
         g2.drawImage(heart.getImage(),
@@ -258,9 +256,15 @@ public class TileMap {
                 int x = Math.round(sprite.getX()) + offsetX;
                 int y = Math.round(sprite.getY()) - 10;
                 
-                drawBoundedRectangle (g2, java.awt.Color.GREEN, x, x + sprite.getWidth(), y, y + sprite.getHeight());
-                
-                g2.drawImage(sprite.getImage(), x, y, sprite.getWidth(), sprite.getHeight(), null);
+                if (!tank.isStopped()) {
+                    drawBoundedRectangle (g2, java.awt.Color.GREEN, x, x + sprite.getWidth(), y, y + sprite.getHeight());
+                    
+                    g2.drawImage(sprite.getImage(), x, y, sprite.getWidth(), sprite.getHeight(), null);
+                } else if (tank.isStopped() && (tank.getAnimation() != null) && (tank.getAnimation().isStillActive())) {
+                    drawBoundedRectangle (g2, java.awt.Color.GREEN, x, x + sprite.getWidth(), y, y + sprite.getHeight());
+                    
+                    g2.drawImage(tank.getAnimation().getImage(), x, y, sprite.getWidth(), sprite.getHeight(), null);
+                }
             }
             
             if (sprite instanceof Tracker){
@@ -393,9 +397,8 @@ public class TileMap {
         player.move(3);
 
     }
-
-
-    public void attack() {
+    
+     public void attack() {
         player.attack();
     }
 

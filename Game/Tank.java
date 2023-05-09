@@ -36,9 +36,14 @@ public class Tank implements Sprite {
     private BufferedImage tankImage;
     private BufferedImage tankImageRight;
     private BufferedImage tankImageLeft;
+    private Animation animationDeath;
+    private Animation animationDeathLeft;
+    private Animation animationDeathRight;
     private Player player;
 
     public Tank (JPanel p,int xPos, int yPos, Player player){
+        animationDeathLeft = new Animation(false);    // loop once
+        animationDeathRight = new Animation(false);    // loop once
         //tileMap = t;
         panel = p;
         dimension = panel.getSize();
@@ -55,9 +60,44 @@ public class Tank implements Sprite {
         x = xPos;
         y = yPos;
         
-        tankImageLeft = ImageManager.loadBufferedImage("images/tank/TankMoveLeft.png");
+        Image animImage1 = ImageManager.loadBufferedImage("images/tank/TankDeathLeft.png");
+        int columns = 11;
+        int rows = 1;
+        int imageWidth = animImage1.getWidth(null) / columns;
+        int imageHeight = animImage1.getHeight(null) / rows;
+        
+        width = imageWidth;
+        height = imageHeight;
+        
+        {
+            BufferedImage frameImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = (Graphics2D) frameImage.getGraphics();
+    
+            g.drawImage(animImage1, 
+                    0, 0, imageWidth, imageHeight,
+                    0 * imageWidth, 0 * imageHeight, (0 * imageWidth) + imageWidth, (0 * imageHeight) + imageHeight, null);
+    
+            tankImageLeft = frameImage;
+        }
+        
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < columns; col++) {
+                BufferedImage frameImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
+                Graphics2D g = (Graphics2D) frameImage.getGraphics();
+        
+                g.drawImage(animImage1, 
+                        0, 0, imageWidth, imageHeight,
+                        col * imageWidth, row * imageHeight, (col * imageWidth) + imageWidth, (row * imageHeight) + imageHeight, null);
+        
+                animationDeathLeft.addFrame(frameImage, 50);
+                animationDeathRight.addFrame(ImageManager.hFlipImage(frameImage), 50);
+            }
+        }
+        
+        
         tankImageRight = ImageManager.hFlipImage(tankImageLeft);
         tankImage = tankImageLeft;
+        animationDeath = animationDeathLeft;
         soundManager = SoundManager.getInstance();
         dx = DX;
         dy = 0;
@@ -66,6 +106,43 @@ public class Tank implements Sprite {
     }
     
     private Tank (Tank tank){
+        this.animationDeathLeft = animationDeathLeft;
+        this.animationDeathRight = animationDeathRight;
+        
+        
+        animationDeathLeft = new Animation(false);    // loop once
+        animationDeathRight = new Animation(false);    // loop once
+        
+        
+        Image animImage1 = ImageManager.loadBufferedImage("images/tank/TankDeathLeft.png");
+        int columns = 11;
+        int rows = 1;
+        int imageWidth = animImage1.getWidth(null) / columns;
+        int imageHeight = animImage1.getHeight(null) / rows;
+        
+        width = imageWidth;
+        height = imageHeight;
+        
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < columns; col++) {
+                BufferedImage frameImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
+                Graphics2D g = (Graphics2D) frameImage.getGraphics();
+        
+                g.drawImage(animImage1, 
+                        0, 0, imageWidth, imageHeight,
+                        col * imageWidth, row * imageHeight, (col * imageWidth) + imageWidth, (row * imageHeight) + imageHeight, null);
+        
+                animationDeathLeft.addFrame(frameImage, 100);
+                animationDeathRight.addFrame(ImageManager.hFlipImage(frameImage), 100);
+            }
+        }
+        
+        
+        
+        
+        
+        
+        
         this.panel = tank.panel;
         this.x = tank.x;
         this.y = tank.y;
@@ -79,6 +156,8 @@ public class Tank implements Sprite {
         this.tankImage = tank.tankImage;
         this.tankImageRight = tank.tankImageRight;
         this.tankImageLeft = tank.tankImageLeft;
+        this.animationDeath = animationDeath;
+        this.animationDeath = animationDeathLeft;
         this.player = tank.player;
         this.stopped = tank.stopped;
     }
@@ -161,8 +240,11 @@ public class Tank implements Sprite {
     }
     
     public void update() {
-        if (stopped)
+        if (stopped){
+            if ((getAnimation() != null) && getAnimation().isStillActive())
+                getAnimation().update();
             return;
+        }
         
         if (player != null){
             x = x + dx;
@@ -201,6 +283,9 @@ public class Tank implements Sprite {
             dx=0;
             dy=0;
             stopped = true;
+            if (faceRightDirection())
+                animationDeath = animationDeathRight;
+            animationDeath.start();
         }
         
     }
@@ -244,6 +329,10 @@ public class Tank implements Sprite {
     
     public Image getImage() {
         return tankImage;
+    }
+    
+    public Animation getAnimation() {
+        return animationDeath;
     }
     
     public void addPlayer(Player player){
