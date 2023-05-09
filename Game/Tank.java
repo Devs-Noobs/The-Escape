@@ -60,7 +60,7 @@ public class Tank implements Sprite {
         x = xPos;
         y = yPos;
         
-        Image animImage1 = ImageManager.loadBufferedImage("images/tank/TankDeathLeft.png");
+        Image animImage1 = ImageManager.loadImage("images/tank/TankDeathLeft.png");
         int columns = 11;
         int rows = 1;
         int imageWidth = animImage1.getWidth(null) / columns;
