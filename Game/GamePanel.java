@@ -14,7 +14,7 @@ import java.awt.geom.Rectangle2D;
 public class GamePanel extends JPanel
                implements Runnable {
 
-    private SoundManager soundManager;
+    // private SoundManager soundManager;
 
     private boolean isRunning;
     private boolean isPaused;
@@ -43,7 +43,7 @@ public class GamePanel extends JPanel
         isPaused = false;
         isAnimShown = false;
         isAnimPaused = false;
-        soundManager = SoundManager.getInstance();
+        // soundManager = SoundManager.getInstance();
 
         image = new BufferedImage (600, 500, BufferedImage.TYPE_INT_RGB);
 
@@ -203,7 +203,7 @@ public class GamePanel extends JPanel
     public void startGame() {                // initialise and start the game thread 
 
         if (gameThread == null) {
-            soundManager.playSound ("background", true);
+            // soundManager.playSound ("background", true);
 
             gameOver = false;
 
@@ -272,12 +272,12 @@ public class GamePanel extends JPanel
             else
                 isPaused = true;
 
-            if (isAnimShown) {
-                if (isPaused)
-                    animation.stopSound();
-                else
-                    animation.playSound();
-            }
+            // if (isAnimShown) {
+            //     if (isPaused)
+            //         animation.stopSound();
+            //     else
+            //         animation.playSound();
+            // }
         }
     }
 
