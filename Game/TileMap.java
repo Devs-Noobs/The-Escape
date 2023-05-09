@@ -25,7 +25,7 @@ public class TileMap {
     private LinkedList<Sprite> sprites;
     private LinkedList<Bullet> bullets;
     private Player player;
-    // private Heart heart;
+    private Heart door;
     private boolean tankShoot;
     private boolean shoot;
     // SoundManager soundmanager;
@@ -61,7 +61,7 @@ public class TileMap {
 
         tiles = new Image[mapWidth][mapHeight];
         player = new Player(panel, this, bgManager);
-        // heart = new Heart (panel, player);
+        door = new Heart (panel, player);
 
         sprites = new LinkedList<Sprite>();
         bullets = new LinkedList<Bullet>();
@@ -227,10 +227,10 @@ public class TileMap {
         }
         // draw Heart sprite
 
-        // g2.drawImage(heart.getImage(),
-        // Math.round(heart.getX()) + offsetX,
-        // Math.round(heart.getY()), 40, 40, //+ offsetY, 50, 50,
-        // null);
+        g2.drawImage(door.getImage(),
+        Math.round(door.getX()) + offsetX,
+        Math.round(door.getY()), 40, 40, //+ offsetY, 50, 50,
+        null);
 
         // draw sprites
         Iterator i = getSprites();
@@ -399,16 +399,21 @@ public class TileMap {
 
         player.update();
 
-        // if (heart.collidesWithPlayer()) {
-        // panel.endLevel();
-        // return;
-        // }
+        if (door.collidesWithPlayer()) {
+            panel.endLevel();
+            return;
+        }
 
-        // heart.update();
+        door.update();
 
-        // if (heart.collidesWithPlayer()) {
-        // panel.endLevel();
-        // }
+        if ( door.collidesWithPlayer() ) {
+            if (!door.isActive()) {
+                panel.lostLife();
+            }
+            else {
+                panel.endLevel();
+            }
+        }
 
         Iterator i = getSprites();
         while (i.hasNext()) {
@@ -451,6 +456,7 @@ public class TileMap {
                         }
                     }
                 }
+
             }
         }
 

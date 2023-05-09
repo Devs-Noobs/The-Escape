@@ -41,6 +41,8 @@ public class Tank implements Sprite {
     private Animation animationDeathRight;
     private Player player;
 
+    private int health;
+
     public Tank (JPanel p,int xPos, int yPos, Player player){
         animationDeathLeft = new Animation(false);    // loop once
         animationDeathRight = new Animation(false);    // loop once
@@ -103,6 +105,8 @@ public class Tank implements Sprite {
         dy = 0;
         moveRight = true;
         timeElapsed = 0;
+
+        health = 8;
     }
     
     private Tank (Tank tank){
@@ -308,6 +312,10 @@ public class Tank implements Sprite {
             return null;
         }
     }
+
+    public void damage() {
+        health -= 1;
+    }
     
     public int getWidth(){
         return width;
@@ -337,5 +345,9 @@ public class Tank implements Sprite {
     
     public void addPlayer(Player player){
         this.player = player;
+    }
+
+    public int healthStatus() {
+        return health;
     }
 }
