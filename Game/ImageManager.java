@@ -7,92 +7,84 @@ import java.io.IOException;
 import java.awt.image.BufferedImage;
 
 /**
-   The ImageManager class manages the loading and processing of images.
-*/
+ * The ImageManager class manages the loading and processing of images.
+ */
 
 public class ImageManager {
-      
-       public ImageManager () {
 
-    }
+    public ImageManager() {}
 
-    public static Image loadImage (String fileName) {
+    public static Image loadImage(String fileName) {
         return new ImageIcon(fileName).getImage();
     }
 
     public static BufferedImage loadBufferedImage(String filename) {
         BufferedImage bi = null;
 
-        File file = new File (filename);
+        File file = new File(filename);
         try {
             bi = ImageIO.read(file);
-        }
-        catch (IOException ioe) {
-            System.out.println ("Error opening file " + filename + ":" + ioe);
+        } catch (IOException ioe) {
+            System.out.println("Error opening file " + filename + ":" + ioe);
         }
         return bi;
     }
 
-
-      // make a copy of the BufferedImage src
+    // make a copy of the BufferedImage src
 
     public static BufferedImage copyImage(BufferedImage src) {
         if (src == null)
             return null;
 
+        int imWidth = src.getWidth();
+        int imHeight = src.getHeight();
+
+        BufferedImage copy = new BufferedImage(imWidth, imHeight,
+                BufferedImage.TYPE_INT_ARGB);
+
+        Graphics2D g2d = copy.createGraphics();
+
+        // copy image
+        g2d.drawImage(src, 0, 0, null);
+        g2d.dispose();
+
+        return copy;
+    }
+
+    public static BufferedImage vFlipImage(BufferedImage src) {
 
         int imWidth = src.getWidth();
         int imHeight = src.getHeight();
 
-        BufferedImage copy = new BufferedImage (imWidth, imHeight,
-                            BufferedImage.TYPE_INT_ARGB);
+        BufferedImage dest = new BufferedImage(imWidth, imHeight,
+                BufferedImage.TYPE_INT_ARGB);
 
-            Graphics2D g2d = copy.createGraphics();
+        Graphics2D g2d = dest.createGraphics();
 
-            // copy image
-            g2d.drawImage(src, 0, 0, null);
-            g2d.dispose();
+        // Perform vertical flip
 
-            return copy; 
-      }
-      
-    public static BufferedImage vFlipImage(BufferedImage src) {
+        g2d.drawImage(src, 0, imHeight, imWidth, 0,
+                0, 0, imWidth, imHeight, null);
 
-		int imWidth = src.getWidth();
-		int imHeight = src.getHeight();
+        return dest;
+    }
 
-		BufferedImage dest = new BufferedImage (imWidth, imHeight,
-							BufferedImage.TYPE_INT_ARGB);
+    public static BufferedImage hFlipImage(BufferedImage src) {
 
-    		Graphics2D g2d = dest.createGraphics();
+        int imWidth = src.getWidth();
+        int imHeight = src.getHeight();
 
-		// Perform vertical flip
+        BufferedImage dest = new BufferedImage(imWidth, imHeight,
+                BufferedImage.TYPE_INT_ARGB);
 
-		g2d.drawImage(src, 0, imHeight, imWidth, 0,
-			 	   0, 0, imWidth, imHeight, null);
+        Graphics2D g2d = dest.createGraphics();
 
-		return dest;
-	}  
-	
-		public static BufferedImage hFlipImage(BufferedImage src) {
+        // Perform horizontal flip
 
-		int imWidth = src.getWidth();
-		int imHeight = src.getHeight();
+        g2d.drawImage(src, imWidth, 0, 0, imHeight,
+                0, 0, imWidth, imHeight, null);
 
-		BufferedImage dest = new BufferedImage (imWidth, imHeight,
-							BufferedImage.TYPE_INT_ARGB);
-
-    		Graphics2D g2d = dest.createGraphics();
-
-		// Perform horizontal flip
-
-		g2d.drawImage(src, imWidth, 0, 0,imHeight,
-			 	   0, 0, imWidth, imHeight, null);
-
-		return dest;
-	}
-
+        return dest;
+    }
 
 }
-
-

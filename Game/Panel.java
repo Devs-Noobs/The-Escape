@@ -25,7 +25,8 @@ public class Panel implements Sprite {
 
     private Player player;
 
-    private BufferedImage spriteImage; // image for sprite
+    private Image spriteImage;
+    private Animation active, inactive;
 
     // Graphics2D g2;
 
@@ -52,12 +53,45 @@ public class Panel implements Sprite {
         originalImage = true;
         grayImage = false;
 
-        spriteImage = ImageManager.loadBufferedImage("images/Heart.png");
+        Image img;
+
+        active = new Animation(true);
+        for (int i = 0; i < 20; i++) {
+            img = ImageManager.loadImage("images/panel/active/" + i + ".png");
+
+            BufferedImage frame = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = (Graphics2D) frame.getGraphics();
+   
+            g.drawImage(img,
+                  0, 0,
+                  null);
+   
+            active.addFrame(frame, 100);
+        }
+        active.start();
+
+        inactive = new Animation(false);
+        for (int i = 0; i < 20; i++) {
+            img = ImageManager.loadImage("images/panel/inactive/" + i + ".png");
+
+            BufferedImage frame = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = (Graphics2D) frame.getGraphics();
+   
+            g.drawImage(img,
+                  0, 0,
+                  null);
+   
+            inactive.addFrame(frame, 100);
+        }
+        inactive.start();
 
         activated = false;
+        spriteImage = active.getImage();
     }
 
     private Panel (Panel panel) {
+        this.active = panel.active;
+        this.inactive = panel.inactive;
         this.dimension = panel.dimension;
         this.width = panel.width;
         this.height = panel.height;
@@ -93,8 +127,7 @@ public class Panel implements Sprite {
         return new Rectangle2D.Double(x, y, XSIZE, YSIZE);
     }
 
-    public void update() {
-    }
+    public void update() {}
 
     public void activate() {
         activated = true;
@@ -129,6 +162,15 @@ public class Panel implements Sprite {
     }
 
     public Image getImage() {
+        if (activated == false) {
+            spriteImage = active.getImage();
+            active.update();
+        }
+        else {
+            spriteImage = inactive.getImage();
+            inactive.update();
+        }
+        
         return spriteImage;
     }
 

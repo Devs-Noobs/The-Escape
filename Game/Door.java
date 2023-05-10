@@ -24,7 +24,8 @@ public class Door implements Sprite {
 
     private Player player;
 
-    private BufferedImage spriteImage; // image for sprite
+    private Image spriteImage;
+    private Animation active, inactive;
 
     // Graphics2D g2;
 
@@ -50,12 +51,49 @@ public class Door implements Sprite {
         originalImage = true;
         grayImage = false;
 
-        spriteImage = ImageManager.loadBufferedImage("images/Heart.png");
+        
+
+        Image img;
+
+        active = new Animation(true);
+        for (int i = 0; i < 18; i++) {
+            img = ImageManager.loadImage("images/barrier/active/" + i + ".png");
+
+            BufferedImage frame = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = (Graphics2D) frame.getGraphics();
+   
+            g.drawImage(img,
+                  0, 0,
+                  null);
+   
+            active.addFrame(frame, 100);
+        }
+        active.start();
+
+        inactive = new Animation(false);
+        for (int i = 0; i < 18; i++) {
+            img = ImageManager.loadImage("images/barrier/inactive/" + i + ".png");
+
+            BufferedImage frame = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = (Graphics2D) frame.getGraphics();
+   
+            g.drawImage(img,
+                  0, 0,
+                  null);
+   
+            inactive.addFrame(frame, 100);
+        }
+        inactive.start();
+
+        activated = false;
+        spriteImage = active.getImage();
 
         activated = false;
     }
 
     private Door (Door door){
+        this.active = door.active;
+        this.inactive = door.inactive;
         this.dimension = door.dimension;
         this.width = door.width;
         this.height = door.height;
@@ -127,6 +165,15 @@ public class Door implements Sprite {
     }
 
     public Image getImage() {
+        if (activated == false) {
+            spriteImage = active.getImage();
+            active.update();
+        }
+        else {
+            spriteImage = inactive.getImage();
+            inactive.update();
+        }
+
         return spriteImage;
     }
 
