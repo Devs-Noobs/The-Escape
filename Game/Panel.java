@@ -10,7 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.awt.image.BufferedImage;
 
-public class Panel {
+public class Panel implements Sprite {
 
     private static final int XSIZE = 50; // width of the image
     private static final int YSIZE = 50; // height of the image
@@ -18,8 +18,10 @@ public class Panel {
 
     private JPanel panel; // JPanel on which image will be drawn
     private Dimension dimension;
+
     private int x;
     private int y;
+    private int width, height;
 
     private Player player;
 
@@ -32,26 +34,43 @@ public class Panel {
 
     private boolean activated;
 
-    public Panel (JPanel panel, Player player) {
+    public Panel (JPanel panel, int xPos, int yPos, Player player) {
         this.panel = panel;
-        // Graphics g = window.getGraphics ();
-        // g2 = (Graphics2D) g;
 
         dimension = panel.getSize();
         Random random = new Random();
-        x = 4128;
-        y = 270;
+        x = xPos;
+        y = yPos;
+
+        width = 32;
+        height = 32;
 
         this.player = player;
 
-        time = 0; // range is 0 to 10
-        timeChange = 1; // set to 1
+        time = 0;
+        timeChange = 1;
         originalImage = true;
         grayImage = false;
 
         spriteImage = ImageManager.loadBufferedImage("images/Heart.png");
 
         activated = false;
+    }
+
+    private Panel (Panel panel) {
+        this.dimension = panel.dimension;
+        this.width = panel.width;
+        this.height = panel.height;
+        this.panel = panel.panel;
+        this.player = panel.player;
+        this.x = panel.x;
+        this.y = panel.y;
+        this.time = panel.time;
+        this.timeChange = panel.timeChange; // set to 1
+        this.originalImage = panel.originalImage;
+        this.grayImage = panel.grayImage;
+        this.spriteImage = panel.spriteImage;
+        this.activated = panel.activated;
     }
 
     public void draw(Graphics2D g2) {
@@ -65,7 +84,6 @@ public class Panel {
         Rectangle2D.Double playerRect = player.getBoundingRectangle();
 
         if (myRect.intersects(playerRect)) {
-            System.out.println("Collision with player!");
             return true;
         } else
             return false;
@@ -80,6 +98,18 @@ public class Panel {
 
     public void activate() {
         activated = true;
+    }
+
+    public boolean isActive() {
+        return activated;
+    }
+    
+    public int getWidth(){
+        return width;
+    }
+    
+    public int getHeight(){
+        return height;
     }
 
     public int getX() {
@@ -102,7 +132,11 @@ public class Panel {
         return spriteImage;
     }
 
-    public boolean isActive() {
-        return activated;
+    public void addPlayer(Player player){
+        this.player = player;
+    }
+
+    public Sprite clone() {
+        return new Panel(this);
     }
 }

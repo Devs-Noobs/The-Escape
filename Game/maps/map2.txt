@@ -9,9 +9,9 @@
 #   1       Bad Guy 1 (grub)
 #   2       Bad Guy 2 (fly)
 AD         IIIIIII              IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII               CA
-AD                    2   !        2                      IIIII  CAAAAAAAAAAAAAAD   o o o o o CA
+AD                    2   !        2                      IIIII  CAAAAAAAAAAAAAAD             CA
 AD                        IIIII                                  CAAAAAAAAAAAAAAHF   IIIIIII  CA
-AD         III                          1    1  1        2       CAAAAAAAAAAAAAAAD  o o o o o CA
-AD                            1      IIIIIIIIIIIII               CAAAAAAAAAAAAAAAHF  o o o o  CA
-AD           1  EBBBBBBBBBBBBBBBF     o o o o o o              * CAAAAAAAAAAAAAAAAD o o o o o CA
+AD         III                          1    1  1        2       CAAAAAAAAAAAAAAAD            CA
+AD                            1      IIIIIIIIIIIII               CAAAAAAAAAAAAAAAHF           CA
+AD           1  EBBBBBBBBBBBBBBBF                                CAAAAAAAAAAAAAAAAD           CA
 AHBBBBBBBBBBBBBBGAAAAAAAAAAAAAAAHBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBGAAAAAAAAAAAAAAAAHBBBBBBBBBBBGA

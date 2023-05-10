@@ -321,7 +321,8 @@ public class Player {
 
       if (direction == 1) { // move left
          playerImage = moveL.getImage();
-         // moveL.update();
+         moveL.update();
+
          goingL = true;
          goingR = false;
 
@@ -336,6 +337,7 @@ public class Player {
       } else if (direction == 2) { // move right
          playerImage = moveR.getImage();
          moveR.update();
+
          goingL = false;
          goingR = true;
 
@@ -440,13 +442,16 @@ public class Player {
       attacking = true;
       attackTimer = System.currentTimeMillis();
 
-      if (goingR == true) {
-         attackR.start();
-         playerImage = attackR.getImage();
-      } else if (goingL == true) {
-         attackL.start();
-         playerImage = attackL.getImage();
-      }
+      attackR.start();
+      attackL.start();
+
+      // if (goingR == true) {
+      //    playerImage = attackR.getImage();
+      //    System.out.println("Attacking Right");
+      // } else if (goingL == true) {
+      //    playerImage = attackL.getImage();
+      //    System.out.println("Attacking Left");
+      // }
    }
 
    public void update() {
@@ -538,9 +543,13 @@ public class Player {
          timer = System.currentTimeMillis() - attackTimer;
          if (timer >= 1200) {
             attacking = false;
+            attackR.stop();
+            attackL.stop();
          } else if (goingR) {
+            playerImage = attackR.getImage();
             attackR.update();
          } else if (goingL) {
+            playerImage = attackL.getImage();
             attackL.update();
          }
       }

@@ -218,8 +218,10 @@ public class GameWindow extends JFrame
         else
         if (keyCode == KeyEvent.VK_Z) {
             gamePanel.shoot();
-            //gamePanel.gameRender();
-            //checkLostLife();
+        }
+        else
+        if (keyCode == KeyEvent.VK_C) {
+            gamePanel.interact();
         }
         else
         if (keyCode == KeyEvent.VK_Q) {

@@ -102,7 +102,6 @@ public class GamePanel extends JPanel
 
             createGameEntities();
             return;
-                
         }
         
         /*
@@ -303,19 +302,22 @@ public class GamePanel extends JPanel
         if(!gameOver)
             tileMap.shoot(true);
     }
+
+    public void interact () {
+        if(!gameOver)
+            tileMap.interact();
+    }
     
     public void jump() {
         if (!gameOver)
             tileMap.jump();
     }
-
     
     public void showAnimation() {
         isAnimShown = true;
         animation.start();
         
     }
-
 
     public void endLevel() {
         level += 1;

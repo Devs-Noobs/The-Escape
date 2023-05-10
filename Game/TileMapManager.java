@@ -20,6 +20,8 @@ public class TileMapManager {
     // host sprites used for cloning
     private Sprite tankSprite;
     private Sprite trackerSprite;
+    private Sprite doorSprite;
+    private Sprite panelSprite;
     /*
      * 
      * // host sprites used for cloning
@@ -95,8 +97,15 @@ public class TileMapManager {
                  */
                 else if (ch == '1') {
                     addSprite(newMap, trackerSprite, x, y);
-                } else if (ch == '2') {
+                } 
+                else if (ch == '2') {
                     addSprite(newMap, tankSprite, x, y);
+                }
+                else if (ch == '9') {
+                    addSprite(newMap, doorSprite, x, y);
+                }
+                else if (ch == '8') {
+                    addSprite(newMap, panelSprite, x, y);
                 }
             }
         }
@@ -164,6 +173,8 @@ public class TileMapManager {
     public void loadCreatureSprites() {
         tankSprite = new Tank(panel, 100, 100, null);
         trackerSprite = new Tracker(panel, 100, 100, null);
+        doorSprite = new Door(panel, 100, 100, null);
+        panelSprite = new Panel(panel, 100, 100, null);
     }
     /*
      * public void loadCreatureSprites() {

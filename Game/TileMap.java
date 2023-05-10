@@ -25,7 +25,7 @@ public class TileMap {
     private LinkedList<Sprite> sprites;
     private LinkedList<Bullet> bullets;
     private Player player;
-    private Door door;
+    // private Door door;
     private boolean tankShoot;
     private boolean shoot;
     // SoundManager soundmanager;
@@ -61,7 +61,7 @@ public class TileMap {
 
         tiles = new Image[mapWidth][mapHeight];
         player = new Player(panel, this, bgManager);
-        door = new Door(panel, player);
+        // door = new Door(panel, player);
 
         sprites = new LinkedList<Sprite>();
         bullets = new LinkedList<Bullet>();
@@ -211,27 +211,6 @@ public class TileMap {
             }
         }
 
-        // draw player
-        if (player.isAttacking() == true) {
-            if (player.direction() == 0) {
-                g2.drawImage(player.getImage(),
-                        Math.round(player.getX()) + offsetX - 94,
-                        Math.round(player.getY()), // + offsetY,
-                        null);
-            }
-        } else {
-            g2.drawImage(player.getImage(),
-                    Math.round(player.getX()) + offsetX,
-                    Math.round(player.getY()), // + offsetY,
-                    null);
-        }
-        // draw Heart sprite
-
-        g2.drawImage(door.getImage(),
-                Math.round(door.getX()) + offsetX,
-                Math.round(door.getY()), 40, 40, // + offsetY, 50, 50,
-                null);
-
         // draw sprites
         Iterator i = getSprites();
         while (i.hasNext()) {
@@ -255,14 +234,14 @@ public class TileMap {
 
             if (sprite instanceof Tracker) {
                 Tracker tracker = (Tracker) sprite;
-                tracker.start();
-
                 int x = Math.round(sprite.getX()) + offsetX;
                 int y = Math.round(sprite.getY());
                 // g2.drawImage(sprite.getImage(), x, y, null);
 
-                if (!tracker.isStopped() && (tracker.getAnimation() != null)
-                        && (tracker.getAnimation().isStillActive())) {
+                if (!tracker.isStopped() 
+                        && (tracker.getAnimation() != null)
+                        && (tracker.getAnimation().isStillActive())
+                ) {
                     // g2.drawImage(ImageManager.hFlipImage((java.awt.image.BufferedImage)
                     // tracker.getAnimation().getImage()), x, y, null);
 
@@ -270,6 +249,36 @@ public class TileMap {
 
                     g2.drawImage(tracker.getAnimation().getImage(), x, y, sprite.getWidth(), sprite.getHeight(), null);
                 }
+            }
+
+            if (sprite instanceof Door) {
+                Door door = (Door) sprite;
+                int x = Math.round(sprite.getX()) + offsetX;
+                int y = Math.round(sprite.getY());
+
+                if (door.collidesWithPlayer()) {
+                    if (door.isActive() == false) {
+                        panel.lostLife();
+                        return;
+                    } else {
+                        panel.endLevel();
+                        return;
+                    }
+                }
+
+                drawBoundedRectangle(g2, java.awt.Color.BLUE, x, x + sprite.getWidth(), y, y + sprite.getHeight());
+
+                g2.drawImage(door.getImage(), x, y, sprite.getWidth(), sprite.getHeight(), null);
+            }
+
+            if (sprite instanceof Panel) {
+                Panel doorSwitch = (Panel) sprite;
+                int x = Math.round(sprite.getX()) + offsetX;
+                int y = Math.round(sprite.getY());
+
+                drawBoundedRectangle(g2, java.awt.Color.BLUE, x, x + sprite.getWidth(), y, y + sprite.getHeight());
+
+                g2.drawImage(doorSwitch.getImage(), x, y, sprite.getWidth(), sprite.getHeight(), null);
             }
             /*
              * // wake up the creature when it's on screen
@@ -307,26 +316,20 @@ public class TileMap {
             }
         }
 
-        /*
-         * if (tankShoot){
-         * tankBullet = new TankBullet(this,50,350,sprites, player);
-         * soundmanager.playSound("boomSound",false);
-         * tankShoot = false;
-         * tankBullet.boom();
-         * 
-         * //soundManager.playClip("boom", false);
-         * int x1 = Math.round(tank.getX()) + offsetX;
-         * int y1 = Math.round(tank.getY());
-         * tankBullet.setX(x1);
-         * tankBullet.setY(y1);
-         * }
-         * 
-         * if(tankBullet != null && tankBullet.isActive()){
-         * g2.drawImage(tankBullet.getImage(), tankBullet.getX(), tankBullet.getY(),
-         * tankBullet.getWidth(), tankBullet.getHeight(), null);
-         * //Bullet bullet = new Bullet(this, 30, 150, ball, square);
-         * }
-         */
+        // draw player
+        if (player.isAttacking() == true) {
+            if (player.direction() == 0) {
+                g2.drawImage(player.getImage(),
+                        Math.round(player.getX()) + offsetX - 94,
+                        Math.round(player.getY()), // + offsetY,
+                        null);
+            }
+        } else {
+            g2.drawImage(player.getImage(),
+                    Math.round(player.getX()) + offsetX,
+                    Math.round(player.getY()), // + offsetY,
+                    null);
+        }
 
     }
 
@@ -345,6 +348,54 @@ public class TileMap {
     public void shoot(boolean shoot) {
         this.shoot = shoot;
         player.attack();
+    }
+
+    public boolean interact() {
+        System.out.println("Interaction");
+        boolean pSwitch = false;
+
+        Iterator i = getSprites();
+
+        while (i.hasNext()) {
+            Sprite s = (Sprite) i.next();
+
+            if (s instanceof Panel) {
+                Panel doorSwitch = (Panel) s;
+
+                if (
+                    doorSwitch.collidesWithPlayer()
+                    && !doorSwitch.isActive()
+                ) {
+                    System.out.println("Interacted with Switch");
+
+                    doorSwitch.activate();
+                    pSwitch = true;
+                }
+            }
+
+            
+        }
+
+        Iterator i2 = getSprites();
+
+        while (i2.hasNext()) {
+            Sprite s = (Sprite) i2.next();
+
+            if (s instanceof Door) {
+                Door door = (Door) s;
+
+                if (
+                    pSwitch == true
+                    && !door.isActive()
+                ) {
+                    System.out.println("Door activated!");
+
+                    door.activate();
+                }
+            }
+        }
+
+        return true;
     }
 
     public void moveLeft() {
@@ -388,29 +439,14 @@ public class TileMap {
     }
 
     public void update() {
+        
+        player.update();
 
         Iterator i2 = bullets.listIterator(0);
         while (i2.hasNext()) {
             Bullet bullet = (Bullet) i2.next();
             if (bullet != null && bullet.isActive()) {
                 bullet.update();
-            }
-        }
-
-        player.update();
-
-        if (door.collidesWithPlayer()) {
-            panel.endLevel();
-            return;
-        }
-
-        door.update();
-
-        if (door.collidesWithPlayer()) {
-            if (door.isActive() == false) {
-                panel.lostLife();
-            } else {
-                panel.endLevel();
             }
         }
 

@@ -1,4 +1,3 @@
-import java.util.Random;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -10,7 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.awt.image.BufferedImage;
 
-public class Door {
+public class Door implements Sprite {
 
     private static final int XSIZE = 50; // width of the image
     private static final int YSIZE = 50; // height of the image
@@ -21,6 +20,7 @@ public class Door {
     private Dimension dimension;
     private int x;
     private int y;
+    private int width, height;
 
     private Player player;
 
@@ -33,15 +33,15 @@ public class Door {
 
     private boolean activated;
 
-    public Door(JPanel panel, Player player) {
+    public Door(JPanel panel, int xPos, int yPos, Player player) {
         this.panel = panel;
-        // Graphics g = window.getGraphics ();
-        // g2 = (Graphics2D) g;
 
         dimension = panel.getSize();
-        Random random = new Random();
-        x = 4128;
-        y = 270;
+        x = xPos;
+        y = yPos;
+
+        width = 32;
+        height = 64;
 
         this.player = player;
 
@@ -55,6 +55,22 @@ public class Door {
         activated = false;
     }
 
+    private Door (Door door){
+        this.dimension = door.dimension;
+        this.width = door.width;
+        this.height = door.height;
+        this.panel = door.panel;
+        this.player = door.player;
+        this.x = door.x;
+        this.y = door.y;
+        this.time = door.time;
+        this.timeChange = door.timeChange; // set to 1
+        this.originalImage = door.originalImage;
+        this.grayImage = door.grayImage;
+        this.spriteImage = door.spriteImage;
+        this.activated = door.activated;
+    }
+
     public void draw(Graphics2D g2) {
 
         g2.drawImage(spriteImage, x, y, XSIZE, YSIZE, null);
@@ -66,7 +82,6 @@ public class Door {
         Rectangle2D.Double playerRect = player.getBoundingRectangle();
 
         if (myRect.intersects(playerRect)) {
-            System.out.println("Collision with player!");
             return true;
         } else
             return false;
@@ -77,6 +92,22 @@ public class Door {
     }
 
     public void update() {
+    }
+
+    public boolean isActive() {
+        return activated;
+    }
+
+    public void activate() {
+        activated = true;
+    }
+    
+    public int getWidth(){
+        return width;
+    }
+    
+    public int getHeight(){
+        return height;
     }
 
     public int getX() {
@@ -99,7 +130,11 @@ public class Door {
         return spriteImage;
     }
 
-    public boolean isActive() {
-        return activated;
+    public void addPlayer(Player player){
+        this.player = player;
+    }
+
+    public Sprite clone() {
+        return new Door(this);
     }
 }
