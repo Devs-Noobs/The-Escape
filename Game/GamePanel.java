@@ -318,7 +318,7 @@ public class GamePanel extends JPanel
 
 
     public void endLevel() {
-        level = level + 1;
+        level += 1;
         levelChange = true;
     }
     

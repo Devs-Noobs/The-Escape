@@ -10,11 +10,10 @@ import java.io.File;
 import java.io.IOException;
 import java.awt.image.BufferedImage;
 
-public class Heart {
+public class Panel {
 
     private static final int XSIZE = 50; // width of the image
     private static final int YSIZE = 50; // height of the image
-    // private static final int DX = 2; // amount of pixels to move in one update
     private static final int YPOS = 150; // vertical position of the image
 
     private JPanel panel; // JPanel on which image will be drawn
@@ -33,7 +32,7 @@ public class Heart {
 
     private boolean activated;
 
-    public Heart(JPanel panel, Player player) {
+    public Panel (JPanel panel, Player player) {
         this.panel = panel;
         // Graphics g = window.getGraphics ();
         // g2 = (Graphics2D) g;
@@ -77,6 +76,10 @@ public class Heart {
     }
 
     public void update() {
+    }
+
+    public void activate() {
+        activated = true;
     }
 
     public int getX() {
