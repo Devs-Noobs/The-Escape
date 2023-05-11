@@ -214,15 +214,6 @@ public class Tank implements Sprite {
         return false;
     }
 
-    /*
-     * public boolean isOnTank(int x, int y) {
-     * if (Tank == null)
-     * return false;
-     * 
-     * return Tank.contains(x, y);
-     * }
-     */
-
     public int getX() {
         return x;
     }
@@ -259,15 +250,6 @@ public class Tank implements Sprite {
                 dx = dx * -1;
                 x = x + dx;
             }
-
-            /*
-             * if (Math.abs (x - player.getX()) < 50 && !soundPlayed) {
-             * //soundManager.playSound ("alien_close", false);
-             * //soundManager.playSound("appear", false);
-             * soundPlayed = true;
-             * tileMap.tankShoot(true);
-             * }
-             */
         }
     }
 

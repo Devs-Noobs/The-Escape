@@ -31,7 +31,11 @@ public class Tracker implements Sprite {
     private boolean started;
     private boolean stopped;
 
+   private boolean goingL, goingR;
+
     private Image trackerImage;
+    private Animation moveL, moveR;
+    private Animation deathL, deathR;
 
     private int boundWidth;
     private int boundHeight;
@@ -41,27 +45,34 @@ public class Tracker implements Sprite {
         panel = p;
 
         random = new Random();
+
         soundPlayed = false;
         soundManager = SoundManager.getInstance();
+
         x = xPos;
         y = yPos;
         dx = SPEED;
         dy = SPEED;
 
-        // this.bullet = bullet;
-        this.player = player;
-        // increment to move along y-axis
+        width = 48;
+        height = 48;
 
-        // load images for wild cat animation
+        goingL = false;
+        goingR = false;
+
+        this.player = player;
+
+        Image spriteImage;
+        int columns;
+        int rows;
+        int imageWidth;
+        int imageHeight;
 
         Image animImage1 = ImageManager.loadImage("images/monster_sprite_REAL.png");
-        int columns = 4;
-        int rows = 3;
-        int imageWidth = animImage1.getWidth(null) / columns;
-        int imageHeight = animImage1.getHeight(null) / rows;
-
-        width = imageWidth;
-        height = imageHeight;
+        columns = 4;
+        rows = 3;
+        imageWidth = animImage1.getWidth(null) / columns;
+        imageHeight = animImage1.getHeight(null) / rows;
 
         {
             BufferedImage frameImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
@@ -89,35 +100,61 @@ public class Tracker implements Sprite {
             }
         }
 
+        //Animations
+        spriteImage = ImageManager.loadImage("images/enemies/air/left/Move.png");
+        moveL = new Animation(true);
+        moveR = new Animation(true);
+        columns = 4;
+        rows = 1;
+
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < columns; col++) {
+                BufferedImage frame = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+                Graphics2D g = (Graphics2D) frame.getGraphics();
+
+                g.drawImage(spriteImage,
+                    0, 0, width, height,
+                    (col * width), (row * height), 
+                    ((col * width) + width), ((row * height) + height), 
+                    null);
+
+                moveL.addFrame(frame, 100);
+                moveR.addFrame(ImageManager.hFlipImage(frame), 100);
+            }
+        }
+        moveL.start();
+        moveR.start();
+
+        spriteImage = ImageManager.loadImage("images/enemies/air/left/Death.png");
+        deathL = new Animation(true);
+        deathR = new Animation(true);
+        columns = 4;
+        rows = 1;
+
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < columns; col++) {
+                BufferedImage frame = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+                Graphics2D g = (Graphics2D) frame.getGraphics();
+
+                g.drawImage(spriteImage,
+                    0, 0, width, height,
+                    (col * width), (row * height), 
+                    ((col * width) + width), ((row * height) + height), 
+                    null);
+
+                deathL.addFrame(frame, 100);
+                deathR.addFrame(ImageManager.hFlipImage(frame), 100);
+            }
+        }
+
         started = false;
         stopped = false;
     }
 
     private Tracker(Tracker tracker) {
-        this.animation = animation;
-
-        animation = new Animation(true); // loop continuously
-
-        Image animImage1 = ImageManager.loadImage("images/left/Move.png");
-        int columns = 4;
-        int rows = 1;
-        int imageWidth = animImage1.getWidth(null) / columns;
-        int imageHeight = animImage1.getHeight(null) / rows;
-
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < columns; col++) {
-                BufferedImage frameImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
-                Graphics2D g = (Graphics2D) frameImage.getGraphics();
-
-                g.drawImage(animImage1,
-                        0, 0, imageWidth, imageHeight,
-                        col * imageWidth, row * imageHeight, (col * imageWidth) + imageWidth,
-                        (row * imageHeight) + imageHeight, null);
-
-                animation.addFrame(frameImage, 100);
-            }
-        }
-
+        this.animation = tracker.animation;
+        this.moveL = tracker.moveL;
+        this.moveR = tracker.moveR;
         this.x = tracker.x;
         this.y = tracker.y;
         this.panel = tracker.panel;
@@ -128,42 +165,27 @@ public class Tracker implements Sprite {
         this.dx = tracker.dx;
         this.dy = tracker.dy;
         this.player = tracker.player;
-        // this.bullet = tracker.bullet;
         this.soundPlayed = tracker.soundPlayed;
         this.started = tracker.started;
         this.stopped = tracker.stopped;
         this.trackerImage = tracker.trackerImage;
     }
 
-    public void start() {
-        // x=5;
-        // y=10;
-        if (!started) {
-            started = true;
-            animation.start();
-        }
-    }
-
     public void update() {
-
-        /*
-         * if (!animation.isStillActive()) {
-         * return;
-         * }
-         */
-
-        if ((stopped) || (animation == null))
-            return;
-
         animation.update();
 
-        // if (!panel.isVisible ()) return;
-
-        if (x > player.getX())
+        if (x > player.getX()) {
             x = x - dx;
-        else if (x < player.getX())
+
+            goingL = true;
+            goingR = false;
+        }
+        else if (x < player.getX()) {
             x = x + dx;
 
+            goingL = false;
+            goingR = true;
+        }
         if (y > player.getY())
             y = y - dy;
         else if (y < player.getY())
@@ -277,6 +299,14 @@ public class Tracker implements Sprite {
     }
 
     public Image getImage() {
+        if (goingR == true) {
+           trackerImage = moveR.getImage();
+           moveR.update();
+        } else if (goingL == true) {
+           trackerImage = moveL.getImage();
+           moveL.update();
+        }
+
         return trackerImage;
     }
 

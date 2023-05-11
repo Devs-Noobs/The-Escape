@@ -105,7 +105,7 @@ public class Player {
       attackL = new Animation(true);
       stripImage = ImageManager.loadImage("images/player/left/HeavyA.png");
       for (int i = 0; i < 12; i++) {
-         BufferedImage frame = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+         BufferedImage frame = new BufferedImage(160, 64, BufferedImage.TYPE_INT_ARGB);
          Graphics2D g = (Graphics2D) frame.getGraphics();
 
          g.drawImage(stripImage,
@@ -174,7 +174,7 @@ public class Player {
       attackR = new Animation(true);
       stripImage = ImageManager.loadImage("images/player/right/HeavyA.png");
       for (int i = 0; i < 12; i++) {
-         BufferedImage frame = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+         BufferedImage frame = new BufferedImage(160, 64, BufferedImage.TYPE_INT_ARGB);
          Graphics2D g = (Graphics2D) frame.getGraphics();
 
          g.drawImage(stripImage,
@@ -278,36 +278,6 @@ public class Player {
 
       return null;
    }
-
-   /*
-    * 
-    * public Point collidesWithTile(int newX, int newY) {
-    * 
-    * int playerWidth = playerImage.getWidth(null);
-    * int playerHeight = playerImage.getHeight(null);
-    * 
-    * int fromX = Math.min (x, newX);
-    * int fromY = Math.min (y, newY);
-    * int toX = Math.max (x, newX);
-    * int toY = Math.max (y, newY);
-    * 
-    * int fromTileX = tileMap.pixelsToTiles (fromX);
-    * int fromTileY = tileMap.pixelsToTiles (fromY);
-    * int toTileX = tileMap.pixelsToTiles (toX + playerWidth - 1);
-    * int toTileY = tileMap.pixelsToTiles (toY + playerHeight - 1);
-    * 
-    * for (int x=fromTileX; x<=toTileX; x++) {
-    * for (int y=fromTileY; y<=toTileY; y++) {
-    * if (tileMap.getTile(x, y) != null) {
-    * Point tilePos = new Point (x, y);
-    * return tilePos;
-    * }
-    * }
-    * }
-    * 
-    * return null;
-    * }
-    */
 
    public synchronized void move(int direction) {
       moving = true;
@@ -444,14 +414,6 @@ public class Player {
 
       attackR.start();
       attackL.start();
-
-      // if (goingR == true) {
-      //    playerImage = attackR.getImage();
-      //    System.out.println("Attacking Right");
-      // } else if (goingL == true) {
-      //    playerImage = attackL.getImage();
-      //    System.out.println("Attacking Left");
-      // }
    }
 
    public void update() {
@@ -513,53 +475,13 @@ public class Player {
             }
          }
       }
-
-      // Idle Timer
-      long timer = System.currentTimeMillis() - moveTimer;
-      if (timer >= 100) {
-         if (moving == true && jumping == false) {
-            moving = false;
-         }
-      }
-
-      // Updates Animations
-      if (attacking == false && moving == false) {
-         if (goingR == true) {
-            playerImage = idleR.getImage();
-            idleR.update();
-         } else if (goingL == true) {
-            playerImage = idleL.getImage();
-            idleL.update();
-         }
-      } else if (moving == true) {
-         if (goingR == true) {
-            playerImage = moveR.getImage();
-            moveR.update();
-         } else if (goingL == true) {
-            playerImage = moveL.getImage();
-            moveL.update();
-         }
-      } else if (attacking == true) {
-         timer = System.currentTimeMillis() - attackTimer;
-         if (timer >= 1200) {
-            attacking = false;
-            attackR.stop();
-            attackL.stop();
-         } else if (goingR) {
-            playerImage = attackR.getImage();
-            attackR.update();
-         } else if (goingL) {
-            playerImage = attackL.getImage();
-            attackL.update();
-         }
-      }
    }
 
-   public int direction() {
+   public String direction() {
       if (goingR)
-         return 1;
+         return "R";
       else
-         return 0;
+         return "L";
    }
 
    public boolean isAttacking() {
@@ -591,13 +513,52 @@ public class Player {
    }
 
    public Image getImage() {
+      // Idle Timer
+      long timer = System.currentTimeMillis() - moveTimer;
+      if (timer >= 100) {
+         if (moving == true && jumping == false) {
+            moving = false;
+         }
+      }
+
+      // Updates Animations
+      if (attacking == false && moving == false) {
+         if (goingR == true) {
+            playerImage = idleR.getImage();
+            idleR.update();
+         } else if (goingL == true) {
+            playerImage = idleL.getImage();
+            idleL.update();
+         }
+      } else if (moving == true) {
+         if (goingR == true) {
+            playerImage = moveR.getImage();
+            moveR.update();
+         } else if (goingL == true) {
+            playerImage = moveL.getImage();
+            moveL.update();
+         }
+      } else if (attacking == true) {
+         timer = System.currentTimeMillis() - attackTimer;
+         if (timer >= 1200) {
+            attacking = false;
+            attackR.stop();
+            attackL.stop();
+         }
+        
+         if (goingR) {
+            playerImage = attackR.getImage();
+            attackR.update();
+         } else if (goingL) {
+            playerImage = attackL.getImage();
+            attackL.update();
+         }
+      }
+
       return playerImage;
    }
 
    public Rectangle2D.Double getBoundingRectangle() {
-      int playerWidth = playerImage.getWidth(null);
-      int playerHeight = playerImage.getHeight(null);
-
-      return new Rectangle2D.Double(x, y, playerWidth, playerHeight);
+      return new Rectangle2D.Double(x, y, width, height);
    }
 }

@@ -187,9 +187,6 @@ public class GameWindow extends JFrame
         if (command.equals(startNewB.getText()))
             gamePanel.startNewGame();
 
-        if (command.equals(focusB.getText()))
-            gamePanel.showAnimation();
-
         if (command.equals(exitB.getText()))
             System.exit(0);
 

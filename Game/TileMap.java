@@ -25,7 +25,6 @@ public class TileMap {
     private LinkedList<Sprite> sprites;
     private LinkedList<Bullet> bullets;
     private Player player;
-    // private Door door;
     private boolean tankShoot;
     private boolean shoot;
     // SoundManager soundmanager;
@@ -182,17 +181,6 @@ public class TileMap {
         offsetX = Math.min(offsetX, 0);
         offsetX = Math.max(offsetX, screenWidth - mapWidthPixels);
 
-        /*
-         * // draw black background, if needed
-         * if (background == null ||
-         * screenHeight > background.getHeight(null))
-         * {
-         * g.setColor(Color.black);
-         * g.fillRect(0, 0, screenWidth, screenHeight);
-         * }
-         */
-        // draw the background first
-
         bgManager.draw(g2);
 
         // draw the visible tiles
@@ -238,16 +226,10 @@ public class TileMap {
                 int y = Math.round(sprite.getY());
                 // g2.drawImage(sprite.getImage(), x, y, null);
 
-                if (!tracker.isStopped() 
-                        && (tracker.getAnimation() != null)
-                        && (tracker.getAnimation().isStillActive())
-                ) {
-                    // g2.drawImage(ImageManager.hFlipImage((java.awt.image.BufferedImage)
-                    // tracker.getAnimation().getImage()), x, y, null);
+                if (!tracker.isStopped()) {
+                    drawBoundedRectangle(g2, java.awt.Color.RED, x, x + sprite.getWidth(), y, y + sprite.getHeight());
 
-                    drawBoundedRectangle(g2, java.awt.Color.BLUE, x, x + sprite.getWidth(), y, y + sprite.getHeight());
-
-                    g2.drawImage(tracker.getAnimation().getImage(), x, y, sprite.getWidth(), sprite.getHeight(), null);
+                    g2.drawImage(tracker.getImage(), x, y, sprite.getWidth(), sprite.getHeight(), null);
                 }
             }
 
@@ -318,9 +300,15 @@ public class TileMap {
 
         // draw player
         if (player.isAttacking() == true) {
-            if (player.direction() == 0) {
+            if (player.direction() == "L") {
                 g2.drawImage(player.getImage(),
                         Math.round(player.getX()) + offsetX - 94,
+                        Math.round(player.getY()), // + offsetY,
+                        null);
+            }
+            else {
+                g2.drawImage(player.getImage(),
+                        Math.round(player.getX()) + offsetX,
                         Math.round(player.getY()), // + offsetY,
                         null);
             }

@@ -24,11 +24,8 @@ public class GamePanel extends JPanel
     private BufferedImage image;
      private Image backgroundImage;
 
-    private BirdAnimation animation;
     private volatile boolean isAnimShown;
     private volatile boolean isAnimPaused;
-
-    private ImageEffect imageEffect;        // sprite demonstrating an image effect
 
     private TileMapManager tileManager;
     private TileMap    tileMap;
@@ -49,12 +46,6 @@ public class GamePanel extends JPanel
 
         level = 1;
         levelChange = false;
-    }
-
-
-    public void createGameEntities() {
-        animation = new BirdAnimation();
-        imageEffect = new ImageEffect (this);
     }
 
 
@@ -83,9 +74,11 @@ public class GamePanel extends JPanel
             try {
                 String filename = "maps/map" + level + ".txt";
                 tileMap = tileManager.loadMap(filename) ;
+
                 int w, h;
                 w = tileMap.getWidth();
                 h = tileMap.getHeight();
+
                 System.out.println ("Changing level to Level " + level);
                 System.out.println ("Width of tilemap " + w);
                 System.out.println ("Height of tilemap " + h);
@@ -100,66 +93,9 @@ public class GamePanel extends JPanel
 */
             }
 
-            createGameEntities();
             return;
         }
-        
-        /*
-        if(bullet!=null && bullet.isActive()){
-            Graphics2D imageContext = (Graphics2D) image.getGraphics();
-            imageContext.drawImage(backgroundImage, 0, 0,400,400, null);    // draw the background image
-            
-            //soundManager.playSound("boomSound",false);
-            
-            updateBullet();
-            bullet.move();
-            
-            for(int i=0;i<NUM_tankS;i++){
-                if (bullet.collidesWithtankAndBullet(tanks[i], bullet)){
-                    //if (explosion == null){
-                    explosion.setlocation();
-                    explosionStarted = true;
-                    explosion.start();
-                    explosion = new Explode(this, tanks[i].getX(), tanks[i].getY(),tank, bullet);
-                  //}
-                    soundManager.playClip("appear", false);
-                    //if (explosion != null) {
-                        
-                   // }
-                }
-
-            }
-             // if (animation.collidesWithTrackerAndBullet( animation, bullet)){                    
-                    // soundManager.playSound("appear", false);
-                    // isHit= true;
-                        // animation.stop();
-                // }
-        }
-        */
     }
-    
-    // public void shoot (){
-        // bullet = new Bullet(this,50,350,tank,player);
-        // if(bullet != null && !isPaused && !bullet.isActive()){
-            // soundManager.playClip("boom", false);
-            // Graphics2D imageContext = (Graphics2D) image.getGraphics();
-            // imageContext.drawImage(backgroundImage, 0, 0,400,400, null);    // draw the background image
-            
-            // bullet.boom(imageContext);
-            // //Bullet bullet = new Bullet(this, 30, 150, tank, player);
-            
-            
-        
-
-        
-        
-       
-        // }
-        // if (!isPaused && isAnimShown)
-            // animation.update();
-
-        // imageEffect.update();
-    // }
 
 
     public void gameRender() {
@@ -170,26 +106,11 @@ public class GamePanel extends JPanel
 
         tileMap.draw (imageContext);
 
-        if (isAnimShown)
-            animation.draw(imageContext);        // draw the animation
-
-        imageEffect.draw(imageContext);            // draw the image effect
-
         if (gameOver) {
             Color darken = new Color (0, 0, 0, 125);
             imageContext.setColor (darken);
             imageContext.fill (new Rectangle2D.Double (0, 0, 600, 500));
         }
-        
-        /*
-        if(bullet!=null){
-            if (bullet.isActive()){
-                updateBullet();
-                bullet.boom(imageContext);
-            }
-        }
-        */
-
 
         Graphics2D g2 = (Graphics2D) getGraphics();    // get the graphics context for the panel
         if (g2 != null)
@@ -222,8 +143,6 @@ public class GamePanel extends JPanel
                 System.exit(0);
             }
 
-            createGameEntities();
-
             gameThread = new Thread(this);
             gameThread.start();            
 
@@ -254,8 +173,6 @@ public class GamePanel extends JPanel
                 System.out.println(e);
                 System.exit(0);
             }
-
-            createGameEntities();
 
             gameThread = new Thread(this);
             gameThread.start();            
@@ -311,12 +228,6 @@ public class GamePanel extends JPanel
     public void jump() {
         if (!gameOver)
             tileMap.jump();
-    }
-    
-    public void showAnimation() {
-        isAnimShown = true;
-        animation.start();
-        
     }
 
     public void endLevel() {
