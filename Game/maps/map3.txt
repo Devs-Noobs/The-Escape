@@ -1,7 +1,9 @@
 # MAP 3
-
-                      IIIIIII      IIIIIII   
-        IIIIII                                       EF
- II              EF                 IIIII           EGD       IIII
-        EF       CD                                EGAD      
-BBBBBBBBGHBBBBBBBGHBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBGAAHBBBBBBBBBBB
+AD                                                                CAA
+AD  11                            1   1   1                     1 CAA
+AD  1                                                           1 CAA
+AD                     IIIIIII      IIIIIII                     1 CAA
+AD                         1              1           EF        1 CAA
+ADIII             EF                 IIIIIII         EGD        IIONA
+AD8      EF      2CD           2                  2 EGAD   1     29
+AHBBBBBBBGHBBBBBBBGHBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBGAAHBBBBBBBBBBBGA
